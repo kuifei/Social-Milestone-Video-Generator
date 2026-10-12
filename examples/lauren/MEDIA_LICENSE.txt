@@ -1,0 +1,29 @@
+Lauren example media — repository display and download only
+
+This notice covers screenshot.png, character.png, preview.jpg, and video.mp4
+in this directory, including underlying avatar, banner, post media, and their
+derived visual/audio content.
+
+Copyright remains with the respective original rights holders. These media
+files are excluded from the project's MIT License.
+
+The repository maintainer has stated that permission was obtained for showing
+and downloading this example in this repository. That reported permission is
+limited to repository display and download. It does not grant an MIT sublicense,
+commercial use, modification, republication, redistribution, or rehosting.
+Obtain separate permission from the relevant rights holders for those uses.
+Downloading a file does not expand the permission scope. This notice is a record
+of the maintainer's stated scope, not an independent verification of a license
+from every underlying rights holder.
+
+The example does not imply endorsement by Lauren (@poteto) or any media owner.
+The profile's rightsConfirmed value records the maintainer's confirmation for
+this workflow; it is not a general-purpose media license.
+
+中文说明
+本目录的 screenshot.png、character.png、preview.jpg、video.mp4 及其中原始和
+衍生媒体保留各自原权利人的版权，不适用项目 MIT 许可证。
+维护者表示已取得本仓库展示和下载所需授权，范围仅限仓库展示和下载，
+不授予商用、修改、再发布、再分发或另行托管的权利，也不按 MIT 再授权。
+其他用途需向有关权利人另行取得许可。下载不扩大授权范围。
+本说明记录维护者声明，并非对所有素材权利的独立核验，也不表示相关人士背书。

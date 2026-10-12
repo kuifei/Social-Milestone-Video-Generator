@@ -1,0 +1,1306 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Milestone Video · Architecture and workflow</title>
+  <style>
+    :root{color-scheme:light;--ink:#172c3d;--muted:#586e7f;--line:#d5dfe5;--blue:#146a91;--blue-soft:#edf7fc;--green:#1c7153;--amber:#97600c;--red:#b14b47;--paper:#f5f7f8}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}button,select{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #54a5ce;outline-offset:4px}a{color:var(--blue);text-underline-offset:3px}code{font:12px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}button,select{color:var(--ink)}
+    .shell{max-width:1520px;margin:auto;padding:38px 32px 28px}.eyebrow{font-size:12px;letter-spacing:2px;color:var(--blue);font-weight:700}.hero{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:26px}h1{font-size:32px;line-height:1.25;letter-spacing:-1px;margin:9px 0 12px}h2,h3,p{margin:0}.intro{color:var(--muted);max-width:770px}.snapshot{white-space:nowrap;text-align:right;color:var(--muted);font-size:12px}.snapshot strong{display:block;color:var(--ink);font-size:14px}
+    .scope{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:24px}.badge{padding:5px 11px;background:#fff;border:1px solid var(--line);border-radius:6px;font-size:12px}.badge strong{font-weight:600}.badge.future-badge{border-style:dashed;color:var(--muted)}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap}.tabs{display:flex;border-bottom:1px solid var(--line);gap:24px}.tab{border:0;border-bottom:3px solid transparent;background:none;padding:10px 0;font-weight:600;color:var(--muted)}.tab[aria-selected=true]{border-color:var(--blue);color:var(--blue)}.scenario{display:flex;gap:10px;align-items:center;font-size:13px}.scenario select{border:1px solid var(--line);border-radius:6px;background:#fff;padding:7px 10px;max-width:100%}[hidden]{display:none!important}
+    .workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}.map-panel{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.map-heading{display:flex;justify-content:space-between;gap:12px;padding:20px 22px 15px;border-bottom:1px solid #e8edf0}.map-heading h2{font-size:18px}.map-heading p{color:var(--muted);font-size:13px;margin-top:3px}.hint{font-size:12px;color:var(--muted);align-self:center;white-space:nowrap}.map-scroll{overflow:auto;scrollbar-gutter:stable}.canvas{position:relative;width:1040px;margin:0 auto;background-image:radial-gradient(#dfe6eb .8px,transparent .8px);background-size:18px 18px}.canvas svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.edge path{stroke:#b9c9d3;stroke-width:1.7;fill:none;marker-end:url(#arrow)}.edge.future path{stroke-dasharray:5 5}.edge text{fill:#5e7383;font-size:12px;font-family:inherit;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}.edge.active path{stroke:var(--blue);stroke-width:2.6;marker-end:url(#arrow-active)}.edge.active text{fill:var(--blue)}.edge.dim{opacity:.2}
+    .node{position:absolute;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left;background:#fff;border:1px solid #ccd8df;border-radius:8px;padding:12px 16px;box-shadow:0 3px 9px #193e5b07;transition:border-color .15s,background .15s,opacity .15s}.node:hover{border-color:var(--blue);background:#f5fbfe}.node.selected{border:2px solid var(--blue);padding:11px 15px;background:var(--blue-soft)}.node .tag{font-size:11px;color:var(--muted);letter-spacing:.5px;line-height:1.2;margin-bottom:5px}.node strong{font-size:15px;line-height:1.3;font-weight:650}.node .subtitle{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.35}.node.external{border-left:4px solid var(--blue)}.node.gate{border-left:4px solid var(--amber)}.node.stop{background:#fff7ef;border-left:4px solid var(--amber)}.node.failure{background:#fff6f5;border-left:4px solid var(--red)}.node.success{background:#f0faf5;border-left:4px solid var(--green)}.node.future{border-style:dashed;background:#f6f8fa}.node.in-path{background:#edf7fc;border-color:#2888b1}.node.dim{opacity:.35}
+    .legend{padding:12px 22px;display:flex;gap:18px;flex-wrap:wrap;border-top:1px solid #e8edf0;color:var(--muted);font-size:12px}.legend span{display:flex;align-items:center;gap:6px}.key{width:10px;height:10px;border-radius:2px;background:#fff;border:1px solid #a8bac6}.key.external{background:#d8edf7;border-color:var(--blue)}.key.gate{background:#f6e1bc;border-color:var(--amber)}.key.future{border-style:dashed}.key.stop{background:#f5d8d6;border-color:var(--red)}
+    .sidebar{position:sticky;top:20px}.detail{border:1px solid var(--line);background:#fff;border-radius:10px;padding:22px}.detail .label{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:1px}.detail h2{font-size:20px;line-height:1.4;margin:8px 0 10px}.detail>p{font-size:13px;color:var(--muted)}.detail-section{border-top:1px solid #e8edf0;margin-top:18px;padding-top:14px}.detail-section h3{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px}.detail ul{padding-left:19px;margin:0;font-size:13px}.detail li+li{margin-top:6px}.files{display:grid;gap:8px}.files a{font-size:12px;overflow-wrap:anywhere}.scenario-note{border-left:3px solid var(--blue);background:#edf6fa;padding:12px 16px;margin-bottom:14px;font-size:13px}.scenario-note strong{display:block;margin-bottom:3px}.footnote{font-size:12px;color:var(--muted);margin-top:16px;line-height:1.75}.limits{margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:20px}.limits section{border-top:1px solid var(--line);padding-top:16px}.limits h3{font-size:14px;margin-bottom:7px}.limits p{font-size:13px;color:var(--muted)}pre{margin:0;font:12px/1.8 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+    @media(min-width:1450px){.canvas{margin:auto}}@media(max-width:1120px){.workspace{grid-template-columns:1fr}.sidebar{position:static}.detail{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}.detail>.label,.detail>h2,.detail>p{grid-column:1/-1}.hero{align-items:start}.snapshot{display:none}}@media(max-width:600px){.shell{padding:24px 14px}h1{font-size:27px}.hero{margin-bottom:20px}.intro{font-size:13px}.scope{gap:6px}.badge{padding:4px 7px}.tabs{gap:22px}.scenario{width:100%;flex-wrap:wrap}.scenario select{flex:1;min-width:180px}.map-heading{padding:16px}.hint{display:none}.detail{display:block;padding:18px}.limits{grid-template-columns:1fr}.canvas{margin:0}.legend{gap:12px;padding:12px 16px}}
+    @media(prefers-reduced-motion:reduce){*{transition:none!important}}@media print{.toolbar,.hint{display:none}.shell{padding:0}.workspace{display:block}.sidebar{position:static}.map-scroll{overflow:visible}.canvas{transform:scale(.65);transform-origin:top left;margin-bottom:-32%}.detail{break-inside:avoid}.limits{break-inside:avoid}}
+  </style>
+</head>
+<body>
+<main class="shell">
+<p>English · <a href="architecture-flow.zh-CN.html">中文</a></p>
+  <header class="hero"><div><div class="eyebrow">MILESTONE VIDEO / SYSTEM MAP</div><h1>From profile screenshot to celebration video</h1><p class="intro">Explore modules, files, and workflow branches. Select a node or scenario to see generation, custom effects, recovery, and explicit regeneration.</p></div><div class="snapshot"><strong>Source snapshot · 2026 / 10 / 12</strong>MilestoneVideo · CLI MVP</div></header>
+  <div class="scope" aria-label="Supported capabilities"><span class="badge"><strong>Video</strong> H3 Max · 768P · 15s</span><span class="badge"><strong>Export</strong> Remotion · 1080 × 1920</span><span class="badge"><strong>Locales</strong> English / Simplified Chinese · X / Twitter</span><span class="badge"><strong>Requests</strong> 1 · no quality retries</span><span class="badge future-badge">Future: platforms / providers</span></div>
+  <div class="toolbar"><nav class="tabs" role="tablist" aria-label="Workflow views"><button type="button" class="tab" id="tab-architecture" role="tab" aria-selected="true" aria-controls="map-panel" data-view="architecture">Architecture</button><button type="button" class="tab" id="tab-business" role="tab" aria-selected="false" aria-controls="map-panel" data-view="business">Workflow</button></nav><label class="scenario" id="scenario-control" hidden>Scenario<select id="scenario"><option value="all">All branches</option><option value="normal">One generation → export</option><option value="custom">Custom scene → frozen prompt</option><option value="regenerate">Regenerate → new job</option><option value="recover">Request / export failure → resume</option></select></label></div>
+  <div class="scenario-note" id="scenario-note" aria-live="polite" hidden></div>
+  <div class="workspace"><section class="map-panel" id="map-panel" role="tabpanel" aria-labelledby="tab-architecture"><div class="map-heading"><div><h2 id="map-title">Architecture · small modules, local files</h2><p id="map-subtitle">Node.js / TypeScript orchestration; hosted generation; FFmpeg / FFprobe; Remotion export.</p></div><span class="hint">Select a node · scroll on narrow screens</span></div><div class="map-scroll"><div class="canvas" id="canvas"></div></div><div class="legend"><span><i class="key" aria-hidden="true"></i>Local modules / files</span><span><i class="key external" aria-hidden="true"></i>Hosted model call</span><span><i class="key gate" aria-hidden="true"></i>Input / export prerequisites</span><span><i class="key stop" aria-hidden="true"></i>Failure branch</span><span><i class="key future" aria-hidden="true"></i>Future capability</span></div></section><aside class="sidebar"><section class="detail" id="detail" aria-live="polite" aria-label="Selected node details"></section></aside></div>
+  <div class="limits"><section><h3>completed means exported</h3><p>No automatic visual QA, brightness rejection, scoring, or approval. FFprobe reads export metadata. Users judge page drift, duplicates, and count errors and can request a new paid job.</p></section><section><h3>Default effect and limitations</h3><p>V6 peace-sign requests a natural exit, number-candles, a V gesture, and confetti. English is the default caption locale; zh-CN is supported. V6 still has page dimming, platters, and foot shadows in testing. Other platforms, green-screen compositing, and free templates are not implemented.</p></section></div>
+  <footer class="footnote">Based on <code>MilestoneVideo/src</code>. This standalone HTML works offline without external scripts or API calls. Highlights explain code branches, not live jobs. Costs are static estimates, not final bills.</footer>
+</main>
+<script>
+'use strict';
+const architecture={
+  "height": 1000,
+  "defaultNode": "pipeline",
+  "nodes": [
+    {
+      "id": "profile",
+      "x": 35,
+      "y": 40,
+      "title": "Screenshot → profile",
+      "subtitle": "Optional command · Gemini",
+      "kind": "external",
+      "body": "Extracts a profile separately; generation does not verify it visually.",
+      "input": "Screenshot",
+      "output": "New profile.json",
+      "rules": [
+        "Check Followers versus Following yourself.",
+        "Uncertain data is not written; rightsConfirmed=false."
+      ],
+      "files": [
+        "src/cli.ts",
+        "src/qa/fal-openrouter.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "cli",
+      "x": 390,
+      "y": 40,
+      "title": "CLI and input options",
+      "subtitle": "profile · generate · resume · qa",
+      "kind": "",
+      "body": "Loads .env and validates options and known cost estimates.",
+      "input": "Options / FAL_KEY / files",
+      "output": "New job or recovery",
+      "rules": [
+        "Defaults: H3 Max, 768P, en, Twitter, V6 peace-sign.",
+        "max-attempts accepts only 1.",
+        "qa is an optional local diagnostic."
+      ],
+      "files": [
+        "src/cli.ts",
+        "src/domain/validation.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "state",
+      "x": 745,
+      "y": 40,
+      "title": "Frozen plans and recovery",
+      "subtitle": "Atomic JSON · local job lock",
+      "kind": "",
+      "body": "Records IDs and estimates to avoid duplicate submissions on recovery.",
+      "input": "Inputs / receipts",
+      "output": "plan.json / result.json",
+      "rules": [
+        "Save the ID before waiting.",
+        "completed means exported, not quality-approved.",
+        "Historical prompts and QA records stay frozen."
+      ],
+      "files": [
+        "src/pipeline/state.ts",
+        "src/pipeline/run.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "domain",
+      "x": 35,
+      "y": 230,
+      "title": "Locale / platform / profile",
+      "subtitle": "Profile · en / zh-CN · Twitter",
+      "kind": "gate",
+      "body": "Separates profile validation and avatar policy from model parameters.",
+      "input": "Profile / locale / platform",
+      "output": "Scene / closingText",
+      "rules": [
+        "Resolve unknown avatars first.",
+        "Public visibility does not confirm rights.",
+        "en is default; zh-CN captions are supported; CLI diagnostics remain English."
+      ],
+      "files": [
+        "src/domain/profile.ts",
+        "src/characters/policy.ts",
+        "src/locales/en.ts",
+        "src/locales/zh-CN.ts",
+        "src/platforms/twitter.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "pipeline",
+      "x": 390,
+      "y": 230,
+      "title": "One-request pipeline",
+      "subtitle": "Character → video → export",
+      "kind": "",
+      "body": "No automatic quality checks, candidate selection, quality retries, or approval.",
+      "input": "Frozen plan / provider",
+      "output": "Raw / final / result",
+      "rules": [
+        "At most one video submission per new job.",
+        "Recovery reuses existing requests or footage.",
+        "Regeneration requires a new paid job."
+      ],
+      "files": [
+        "src/pipeline/run.ts",
+        "src/domain/types.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "effects",
+      "x": 745,
+      "y": 230,
+      "title": "Effects and custom templates",
+      "subtitle": "V6 peace-sign · blow-out · custom",
+      "kind": "",
+      "body": "Effects describe actions; providers add their reference syntax.",
+      "input": "Scene / UTF-8 template",
+      "output": "Prompt / effect / template hash",
+      "rules": [
+        "V6: natural exit, empty black avatar, colored candles, V gesture.",
+        "blow-out retains the previous choreography.",
+        "Custom text substitution executes no code."
+      ],
+      "files": [
+        "src/effects/index.ts",
+        "src/effects/peace-sign.ts",
+        "src/scenes/milestone.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "character",
+      "x": 35,
+      "y": 430,
+      "title": "Character turnaround",
+      "subtitle": "Nano Banana 2 / supplied sheet",
+      "kind": "external",
+      "body": "Illustrates the avatar or creates a generic original mascot.",
+      "input": "Screenshot / avatarKind / mode",
+      "output": "input/character.*",
+      "rules": [
+        "Supplied sheets skip this paid stage.",
+        "Static estimate: US$0.08.",
+        "Recovery reuses a known request ID."
+      ],
+      "files": [
+        "src/characters/nano-banana-2.ts",
+        "src/characters/prompt.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "video",
+      "x": 390,
+      "y": 430,
+      "title": "H3 Max · 768P · 15s",
+      "subtitle": "Exact first frame + character",
+      "kind": "external",
+      "body": "Uses image_url for the screenshot and a single character reference; expansion disabled.",
+      "input": "Frozen prompt / images",
+      "output": "attempts/01/raw.mp4",
+      "rules": [
+        "Static estimate: US$1.20 plus reference usage.",
+        "Safety checking enabled; 12-minute request timeout.",
+        "Optional H3 has its own ordered references."
+      ],
+      "files": [
+        "src/providers/minimax-h3-max/index.ts",
+        "src/providers/minimax-h3/index.ts",
+        "src/providers/types.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "queue",
+      "x": 745,
+      "y": 430,
+      "title": "fal request lifecycle",
+      "subtitle": "Upload / submit / poll / download",
+      "kind": "",
+      "body": "Handles timeouts, classified errors, cancellation, and known-ID recovery.",
+      "input": "Payload / existingRequestId",
+      "output": "Receipt / ProviderFailure",
+      "rules": [
+        "Unknown submissions without IDs are not resubmitted blindly.",
+        "Safety refusals and invalid terminal responses need reconciliation.",
+        "This is not a local queue service."
+      ],
+      "files": [
+        "src/providers/fal-queue.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "media",
+      "x": 35,
+      "y": 630,
+      "title": "Canvas and metadata",
+      "subtitle": "FFmpeg / FFprobe",
+      "kind": "",
+      "body": "Fits the screenshot with white padding and reads export metadata.",
+      "input": "Screenshot / raw.mp4",
+      "output": "9:16 image / metadata",
+      "rules": [
+        "Visual defects do not block export.",
+        "Unreadable duration, fps, or dimensions can fail.",
+        "Historical QA helpers are optional diagnostics."
+      ],
+      "files": [
+        "src/pipeline/screenshot-canvas.ts",
+        "src/pipeline/media.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "remotion",
+      "x": 390,
+      "y": 630,
+      "title": "Exact closing caption",
+      "subtitle": "en / zh-CN · 1080×1920",
+      "kind": "",
+      "body": "Adds localized closing copy on a light local panel during the last three seconds.",
+      "input": "Raw / closingText / metadata",
+      "output": "final.mp4",
+      "rules": [
+        "contain preserves the frame and source audio.",
+        "Does not repair generated text or page drift.",
+        "No final quality gate."
+      ],
+      "files": [
+        "src/pipeline/remotion-renderer.ts",
+        "src/remotion/index.tsx",
+        "src/remotion/MilestoneComposition.tsx"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "artifacts",
+      "x": 745,
+      "y": 630,
+      "title": "Outputs and cost ledger",
+      "subtitle": "No automatic QA / selection",
+      "kind": "",
+      "body": "Stores inputs, character, raw clip, final export, and recovery records.",
+      "input": "Progress / request IDs",
+      "output": "runs/<job>/",
+      "rules": [
+        "qualityGate=disabled.",
+        "Unknown actual bills stay null.",
+        "Profile extraction has a separate cost."
+      ],
+      "files": [
+        "src/pipeline/run.ts",
+        "src/domain/types.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "future",
+      "x": 35,
+      "y": 850,
+      "title": "Future extension points",
+      "subtitle": "Platforms / providers / templates",
+      "kind": "future",
+      "body": "Add validated capabilities through existing small interfaces.",
+      "input": "Future requirements",
+      "output": "Definitions / adapters / tests",
+      "rules": [
+        "No free renderer, handwriting, or number rolling yet.",
+        "Green-screen compositing, batch benchmarks, and cleanup are not implemented."
+      ],
+      "files": [
+        "src/locales/index.ts",
+        "src/platforms/index.ts",
+        "src/providers/types.ts"
+      ],
+      "w": 970,
+      "h": 84
+    }
+  ],
+  "edges": [
+    {
+      "from": "profile",
+      "to": "cli",
+      "points": [
+        [
+          295,
+          82
+        ],
+        [
+          390,
+          82
+        ]
+      ],
+      "label": "Profile",
+      "labelAt": [
+        342,
+        69
+      ],
+      "kind": ""
+    },
+    {
+      "from": "cli",
+      "to": "pipeline",
+      "points": [
+        [
+          520,
+          124
+        ],
+        [
+          520,
+          230
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "domain",
+      "to": "pipeline",
+      "points": [
+        [
+          295,
+          272
+        ],
+        [
+          390,
+          272
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "pipeline",
+      "to": "state",
+      "points": [
+        [
+          650,
+          250
+        ],
+        [
+          710,
+          250
+        ],
+        [
+          710,
+          150
+        ],
+        [
+          875,
+          150
+        ],
+        [
+          875,
+          124
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "effects",
+      "to": "pipeline",
+      "points": [
+        [
+          745,
+          272
+        ],
+        [
+          650,
+          272
+        ]
+      ],
+      "label": "Scene",
+      "labelAt": [
+        697,
+        259
+      ],
+      "kind": ""
+    },
+    {
+      "from": "pipeline",
+      "to": "video",
+      "points": [
+        [
+          520,
+          314
+        ],
+        [
+          520,
+          430
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "character",
+      "to": "video",
+      "points": [
+        [
+          295,
+          472
+        ],
+        [
+          390,
+          472
+        ]
+      ],
+      "label": "Character",
+      "labelAt": [
+        342,
+        459
+      ],
+      "kind": ""
+    },
+    {
+      "from": "video",
+      "to": "queue",
+      "points": [
+        [
+          650,
+          472
+        ],
+        [
+          745,
+          472
+        ]
+      ],
+      "label": "Request",
+      "labelAt": [
+        697,
+        459
+      ],
+      "kind": ""
+    },
+    {
+      "from": "video",
+      "to": "remotion",
+      "points": [
+        [
+          520,
+          514
+        ],
+        [
+          520,
+          630
+        ]
+      ],
+      "label": "Raw clip",
+      "labelAt": [
+        565,
+        579
+      ],
+      "kind": ""
+    },
+    {
+      "from": "media",
+      "to": "remotion",
+      "points": [
+        [
+          295,
+          672
+        ],
+        [
+          390,
+          672
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "remotion",
+      "to": "artifacts",
+      "points": [
+        [
+          650,
+          672
+        ],
+        [
+          745,
+          672
+        ]
+      ],
+      "label": "Export",
+      "labelAt": [
+        697,
+        659
+      ],
+      "kind": ""
+    }
+  ]
+};
+const business={
+  "height": 1170,
+  "defaultNode": "generate",
+  "nodes": [
+    {
+      "id": "extract",
+      "x": 25,
+      "y": 30,
+      "title": "Optional profile extraction",
+      "subtitle": "profile command / user check",
+      "kind": "",
+      "body": "Creates a draft separately; the video pipeline does not verify the screenshot.",
+      "input": "Screenshot",
+      "output": "profile.json",
+      "rules": [
+        "Generation trusts the supplied profile.",
+        "Unconfirmed rights stay false and do not block."
+      ],
+      "files": [
+        "src/cli.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "input",
+      "x": 365,
+      "y": 30,
+      "title": "New generate job",
+      "subtitle": "Screenshot / profile / character",
+      "kind": "",
+      "body": "Choose a new output directory and effect.",
+      "input": "Local inputs",
+      "output": "One-request job",
+      "rules": [
+        "Existing directories are not overwritten.",
+        "Defaults: English, V6 peace-sign, H3 Max 768P."
+      ],
+      "files": [
+        "src/cli.ts"
+      ],
+      "w": 280,
+      "h": 84
+    },
+    {
+      "id": "validate",
+      "x": 365,
+      "y": 155,
+      "title": "Input and budget checks",
+      "subtitle": "One video per job",
+      "kind": "gate",
+      "body": "Validates avatar category, options, placeholders, and known estimates.",
+      "input": "Profile / effect / budget",
+      "output": "Proceed or fail locally",
+      "rules": [
+        "No visual acceptance check.",
+        "US$1.28 estimate, or US$1.20 with supplied character; reference usage is additional."
+      ],
+      "files": [
+        "src/domain/validation.ts",
+        "src/effects/index.ts",
+        "src/cli.ts"
+      ],
+      "w": 280,
+      "h": 84
+    },
+    {
+      "id": "custom",
+      "x": 735,
+      "y": 155,
+      "title": "Optional custom scene",
+      "subtitle": "--prompt-file → custom",
+      "kind": "",
+      "body": "Substitutes known placeholders as text without executing code.",
+      "input": "UTF-8 template",
+      "output": "Template / hash / rendered prompt",
+      "rules": [
+        "followers / displayName / handle / platform.",
+        "Does not change API duration or resolution."
+      ],
+      "files": [
+        "src/effects/index.ts",
+        "examples/custom-effect.txt"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "freeze",
+      "x": 365,
+      "y": 280,
+      "title": "Freeze plan and inputs",
+      "subtitle": "9:16 white canvas · manifests",
+      "kind": "",
+      "body": "Saves inputs, effect, prompt, model settings, and custom text.",
+      "input": "Validated inputs",
+      "output": "input/ + plan.json",
+      "rules": [
+        "resume does not update historical prompts.",
+        "Atomic JSON and a local lock protect state."
+      ],
+      "files": [
+        "src/pipeline/run.ts",
+        "src/pipeline/state.ts"
+      ],
+      "w": 280,
+      "h": 84
+    },
+    {
+      "id": "character",
+      "x": 365,
+      "y": 405,
+      "title": "Character turnaround",
+      "subtitle": "Nano Banana 2 / supplied",
+      "kind": "external",
+      "body": "Prepares one character; supplied images skip generation.",
+      "input": "Screenshot / avatarKind",
+      "output": "input/character.*",
+      "rules": [
+        "New character estimate: US$0.08.",
+        "Known IDs recover the same request."
+      ],
+      "files": [
+        "src/characters/nano-banana-2.ts"
+      ],
+      "w": 280,
+      "h": 84
+    },
+    {
+      "id": "generate",
+      "x": 365,
+      "y": 530,
+      "title": "One video generation",
+      "subtitle": "H3 Max · 768P · 15s",
+      "kind": "external",
+      "body": "Submits once, records ID/cost, then polls and downloads.",
+      "input": "First frame / character / prompt",
+      "output": "attempts/01/raw.mp4",
+      "rules": [
+        "V6 requests a natural exit, colored candles, V gesture, and confetti.",
+        "Page dimming, a platter, and foot shadows remain known model defects."
+      ],
+      "files": [
+        "src/providers/minimax-h3-max/index.ts",
+        "src/pipeline/run.ts"
+      ],
+      "w": 280,
+      "h": 84
+    },
+    {
+      "id": "recover",
+      "x": 25,
+      "y": 530,
+      "title": "resume: recovery only",
+      "subtitle": "Known ID / downloaded raw",
+      "kind": "",
+      "body": "Continues the request or repeats local export, without new quality candidates.",
+      "input": "Frozen plan / checkpoint",
+      "output": "Recovered polling / export",
+      "rules": [
+        "Unknown submissions and terminal refusals need reconciliation.",
+        "Completed jobs return unchanged."
+      ],
+      "files": [
+        "src/pipeline/run.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "transport",
+      "x": 735,
+      "y": 530,
+      "title": "Uncertain provider outcome",
+      "subtitle": "needs_review",
+      "kind": "stop",
+      "body": "Pauses request recovery; this is not a semantic quality failure.",
+      "input": "ProviderFailure",
+      "output": "Error / ID / costs",
+      "rules": [
+        "Known IDs can recover the same request.",
+        "Do not blindly resubmit unknown or refused outcomes."
+      ],
+      "files": [
+        "src/providers/fal-queue.ts",
+        "src/pipeline/run.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "metadata",
+      "x": 365,
+      "y": 655,
+      "title": "Read export metadata",
+      "subtitle": "FFprobe · no quality gate",
+      "kind": "",
+      "body": "Reads duration, fps, dimensions, and audio presence.",
+      "input": "raw.mp4",
+      "output": "VideoMetadata",
+      "rules": [
+        "No brightness, silence, action, or count QA.",
+        "Unreadable media cannot be rendered."
+      ],
+      "files": [
+        "src/pipeline/media.ts"
+      ],
+      "w": 280,
+      "h": 84
+    },
+    {
+      "id": "render",
+      "x": 365,
+      "y": 780,
+      "title": "Remotion closing caption",
+      "subtitle": "Last 3 seconds · en / zh-CN",
+      "kind": "",
+      "body": "Exports the existing clip at its source duration and fps.",
+      "input": "Raw / metadata / closingText",
+      "output": "final.mp4",
+      "rules": [
+        "1080×1920 / contain / light caption panel.",
+        "No final QA or approval command."
+      ],
+      "files": [
+        "src/pipeline/remotion-renderer.ts"
+      ],
+      "w": 280,
+      "h": 84
+    },
+    {
+      "id": "failure",
+      "x": 735,
+      "y": 780,
+      "title": "Character / export failure",
+      "subtitle": "failed",
+      "kind": "failure",
+      "body": "Saves the failure reason; local recovery can reuse footage.",
+      "input": "Runtime error",
+      "output": "result.failureReason",
+      "rules": [
+        "Failure is not reported as a successful export.",
+        "Visual defects do not trigger paid retries."
+      ],
+      "files": [
+        "src/pipeline/run.ts"
+      ],
+      "w": 260,
+      "h": 84
+    },
+    {
+      "id": "complete",
+      "x": 365,
+      "y": 905,
+      "title": "completed: exported",
+      "subtitle": "User decides visual quality",
+      "kind": "success",
+      "body": "The user watches the result; no automatic acceptance step.",
+      "input": "final.mp4",
+      "output": "View / download",
+      "rules": [
+        "qualityGate=disabled.",
+        "Historical QA failures remain unchanged."
+      ],
+      "files": [
+        "src/domain/types.ts",
+        "src/pipeline/run.ts"
+      ],
+      "w": 280,
+      "h": 84
+    },
+    {
+      "id": "regenerate",
+      "x": 25,
+      "y": 1030,
+      "title": "Regenerate as a new job",
+      "subtitle": "Explicit new paid request",
+      "kind": "",
+      "body": "Choose a new --out; reuse a character or change the effect.",
+      "input": "User decision / options",
+      "output": "New single-video job",
+      "rules": [
+        "Separate from resume; no quality retries.",
+        "A supplied character avoids another character charge."
+      ],
+      "files": [
+        "src/cli.ts",
+        "README.md"
+      ],
+      "w": 260,
+      "h": 84
+    }
+  ],
+  "edges": [
+    {
+      "from": "extract",
+      "to": "input",
+      "points": [
+        [
+          285,
+          72
+        ],
+        [
+          365,
+          72
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "input",
+      "to": "validate",
+      "points": [
+        [
+          505,
+          114
+        ],
+        [
+          505,
+          155
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "custom",
+      "to": "validate",
+      "points": [
+        [
+          735,
+          197
+        ],
+        [
+          645,
+          197
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "validate",
+      "to": "freeze",
+      "points": [
+        [
+          505,
+          239
+        ],
+        [
+          505,
+          280
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "freeze",
+      "to": "character",
+      "points": [
+        [
+          505,
+          364
+        ],
+        [
+          505,
+          405
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "character",
+      "to": "generate",
+      "points": [
+        [
+          505,
+          489
+        ],
+        [
+          505,
+          530
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "recover",
+      "to": "generate",
+      "points": [
+        [
+          285,
+          572
+        ],
+        [
+          365,
+          572
+        ]
+      ],
+      "label": "Same ID",
+      "labelAt": [
+        325,
+        559
+      ],
+      "kind": ""
+    },
+    {
+      "from": "generate",
+      "to": "transport",
+      "points": [
+        [
+          645,
+          572
+        ],
+        [
+          735,
+          572
+        ]
+      ],
+      "label": "Error",
+      "labelAt": [
+        690,
+        559
+      ],
+      "kind": ""
+    },
+    {
+      "from": "generate",
+      "to": "metadata",
+      "points": [
+        [
+          505,
+          614
+        ],
+        [
+          505,
+          655
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "metadata",
+      "to": "render",
+      "points": [
+        [
+          505,
+          739
+        ],
+        [
+          505,
+          780
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "render",
+      "to": "failure",
+      "points": [
+        [
+          645,
+          822
+        ],
+        [
+          735,
+          822
+        ]
+      ],
+      "label": "Error",
+      "labelAt": [
+        690,
+        809
+      ],
+      "kind": ""
+    },
+    {
+      "from": "character",
+      "to": "failure",
+      "points": [
+        [
+          645,
+          447
+        ],
+        [
+          1020,
+          447
+        ],
+        [
+          1020,
+          822
+        ],
+        [
+          995,
+          822
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "metadata",
+      "to": "failure",
+      "points": [
+        [
+          645,
+          697
+        ],
+        [
+          700,
+          697
+        ],
+        [
+          700,
+          801
+        ],
+        [
+          735,
+          801
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "render",
+      "to": "complete",
+      "points": [
+        [
+          505,
+          864
+        ],
+        [
+          505,
+          905
+        ]
+      ],
+      "label": "",
+      "labelAt": null,
+      "kind": ""
+    },
+    {
+      "from": "complete",
+      "to": "regenerate",
+      "points": [
+        [
+          365,
+          947
+        ],
+        [
+          155,
+          947
+        ],
+        [
+          155,
+          1030
+        ]
+      ],
+      "label": "Regenerate",
+      "labelAt": [
+        240,
+        934
+      ],
+      "kind": ""
+    },
+    {
+      "from": "regenerate",
+      "to": "input",
+      "points": [
+        [
+          25,
+          1072
+        ],
+        [
+          10,
+          1072
+        ],
+        [
+          10,
+          15
+        ],
+        [
+          505,
+          15
+        ],
+        [
+          505,
+          30
+        ]
+      ],
+      "label": "New job",
+      "labelAt": [
+        190,
+        16
+      ],
+      "kind": ""
+    }
+  ]
+};
+const scenarios={
+  "all": {
+    "nodes": [],
+    "edges": [],
+    "title": "",
+    "text": ""
+  },
+  "normal": {
+    "nodes": [
+      "input",
+      "validate",
+      "freeze",
+      "character",
+      "generate",
+      "metadata",
+      "render",
+      "complete"
+    ],
+    "edges": [
+      "input>validate",
+      "validate>freeze",
+      "freeze>character",
+      "character>generate",
+      "generate>metadata",
+      "metadata>render",
+      "render>complete"
+    ],
+    "title": "One job, one video, direct export",
+    "text": "No automatic quality QA, candidate scoring, or approval. completed only means the export finished."
+  },
+  "custom": {
+    "nodes": [
+      "custom",
+      "validate",
+      "freeze",
+      "character",
+      "generate",
+      "metadata",
+      "render",
+      "complete"
+    ],
+    "edges": [
+      "custom>validate",
+      "validate>freeze",
+      "freeze>character",
+      "character>generate",
+      "generate>metadata",
+      "metadata>render",
+      "render>complete"
+    ],
+    "title": "Custom text describes a scene",
+    "text": "The template and hash are frozen in the plan. resume does not reload an edited external template."
+  },
+  "regenerate": {
+    "nodes": [
+      "complete",
+      "regenerate",
+      "input",
+      "validate",
+      "freeze",
+      "character",
+      "generate"
+    ],
+    "edges": [
+      "complete>regenerate",
+      "regenerate>input",
+      "input>validate",
+      "validate>freeze",
+      "freeze>character",
+      "character>generate"
+    ],
+    "title": "The user chooses a new paid job",
+    "text": "Generate into a new --out and optionally reuse a character. Visual defects never trigger automatic charges."
+  },
+  "recover": {
+    "nodes": [
+      "recover",
+      "generate",
+      "transport",
+      "metadata",
+      "render",
+      "failure",
+      "complete"
+    ],
+    "edges": [
+      "recover>generate",
+      "generate>transport",
+      "generate>metadata",
+      "metadata>render",
+      "metadata>failure",
+      "render>failure",
+      "render>complete"
+    ],
+    "title": "Recovery reuses the existing request",
+    "text": "resume uses the known ID or raw clip. Unknown submissions or terminal refusals need provider reconciliation."
+  }
+};
+const graphs={architecture,business};
+const canvas=document.getElementById('canvas');
+const detail=document.getElementById('detail');
+let currentView='architecture';
+let selectedId=architecture.defaultNode;
+const ns='http://www.w3.org/2000/svg';
+function svgElement(tag,attrs={}){const element=document.createElementNS(ns,tag);for(const [key,value] of Object.entries(attrs))element.setAttribute(key,String(value));return element;}
+function htmlElement(tag,className,text){const element=document.createElement(tag);if(className)element.className=className;if(text!==undefined)element.textContent=text;return element;}
+function render(){
+  const graph=graphs[currentView];canvas.replaceChildren();canvas.style.height=graph.height+'px';
+  const svg=svgElement('svg',{viewBox:`0 0 1040 ${graph.height}`,'aria-hidden':'true'});
+  const defs=svgElement('defs');
+  for(const [id,color] of [['arrow','#b9c9d3'],['arrow-active','#146a91']]){const marker=svgElement('marker',{id,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto'});marker.append(svgElement('path',{d:'M 0 0 L 10 5 L 0 10 z',fill:color}));defs.append(marker);}svg.append(defs);
+  graph.edges.forEach(edge=>{const group=svgElement('g',{class:'edge '+edge.kind,'data-edge':edge.from+'>'+edge.to});group.append(svgElement('path',{d:edge.points.map((p,i)=>(i?'L':'M')+p.join(' ')).join(' ')}));if(edge.label){const pos=edge.labelAt;const text=svgElement('text',{x:pos[0],y:pos[1],'text-anchor':'middle'});text.textContent=edge.label;group.append(text);}svg.append(group);});canvas.append(svg);
+  graph.nodes.forEach(node=>{const button=htmlElement('button','node '+node.kind);button.type='button';button.dataset.node=node.id;button.style.cssText=`left:${node.x}px;top:${node.y}px;width:${node.w}px;height:${node.h}px`;button.setAttribute('aria-pressed',String(node.id===selectedId));button.append(htmlElement('span','tag',node.kind==='future'?'FUTURE':node.kind==='external'?'MODEL / API':node.kind==='gate'?'CHECKPOINT':node.kind==='failure'?'FAILED':node.kind==='stop'?'NEEDS ATTENTION':node.kind==='success'?'COMPLETED':'LOCAL / CORE'),htmlElement('strong','',node.title),htmlElement('span','subtitle',node.subtitle));button.addEventListener('click',()=>selectNode(node.id));canvas.append(button);});
+  selectNode(selectedId);
+}
+function detailSection(title,values){const section=htmlElement('div','detail-section');section.append(htmlElement('h3','',title));if(Array.isArray(values)){const list=htmlElement('ul');values.forEach(value=>list.append(htmlElement('li','',value)));section.append(list);}else section.append(htmlElement('p','',values));return section;}
+function selectNode(id){
+  const node=graphs[currentView].nodes.find(item=>item.id===id);if(!node)return;selectedId=id;
+  detail.replaceChildren(htmlElement('div','label',currentView==='architecture'?'MODULE DETAIL':'FLOW DETAIL'),htmlElement('h2','',node.title),htmlElement('p','',node.body),detailSection('Input',node.input),detailSection('Output',node.output),detailSection('Rules and limits',node.rules));
+  const section=htmlElement('div','detail-section');section.append(htmlElement('h3','','Source files (relative to project root)'));const files=htmlElement('div','files');node.files.forEach(file=>{const link=htmlElement('a','',file);link.href='../'+file;link.target='_blank';link.rel='noopener';files.append(link);});section.append(files);detail.append(section);
+  if(id==='artifacts'){const tree=htmlElement('pre','','runs/<job>/\n  input/\n    profile.json\n    screenshot.*\n    screenshot-9x16.png\n    character.*\n    custom-prompt.txt (optional)\n  plan.json\n  attempts/01/raw.mp4\n  final.mp4\n  result.json\n  remotion-assets/source.mp4');const filesSection=htmlElement('div','detail-section');filesSection.append(htmlElement('h3','','Job files'),tree);detail.append(filesSection);}
+  updateHighlights();
+}
+function updateHighlights(){
+  const value=currentView==='business'?document.getElementById('scenario').value:'all';const scenario=scenarios[value];
+  canvas.querySelectorAll('[data-node]').forEach(button=>{const selected=button.dataset.node===selectedId;button.classList.toggle('selected',selected);button.setAttribute('aria-pressed',String(selected));button.classList.toggle('in-path',scenario.nodes.includes(button.dataset.node));button.classList.toggle('dim',value!=='all'&&!scenario.nodes.includes(button.dataset.node)&&!selected);});
+  canvas.querySelectorAll('[data-edge]').forEach(group=>{const key=group.dataset.edge;const adjacent=key.split('>').includes(selectedId);const inPath=scenario.edges.includes(key);group.classList.toggle('active',value==='all'?adjacent:inPath);group.classList.toggle('dim',value!=='all'&&!inPath);});
+  const note=document.getElementById('scenario-note');note.hidden=value==='all';note.replaceChildren();if(value!=='all')note.append(htmlElement('strong','',scenario.title),htmlElement('span','',scenario.text));
+}
+function switchView(view){
+  currentView=view;selectedId=graphs[view].defaultNode;
+  document.querySelectorAll('[data-view]').forEach(tab=>tab.setAttribute('aria-selected',String(tab.dataset.view===view)));
+  document.getElementById('map-panel').setAttribute('aria-labelledby','tab-'+view);
+  document.getElementById('scenario-control').hidden=view!=='business';
+  document.getElementById('map-title').textContent=view==='architecture'?'Architecture · small modules, local files':'Workflow · one generation, user review';
+  document.getElementById('map-subtitle').textContent=view==='architecture'?'Node.js / TypeScript orchestration; hosted generation; FFmpeg / FFprobe; Remotion export.':'Follow the central path; side branches show custom effects, recovery, and new paid jobs.';
+  render();
+}
+document.querySelectorAll('[data-view]').forEach(button=>{button.addEventListener('click',()=>switchView(button.dataset.view));button.addEventListener('keydown',event=>{if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();const view=currentView==='architecture'?'business':'architecture';switchView(view);document.getElementById('tab-'+view).focus();}});});
+document.getElementById('scenario').addEventListener('change',()=>{const first={normal:'complete',custom:'custom',regenerate:'regenerate',recover:'recover',all:'generate'};selectNode(first[document.getElementById('scenario').value]);});
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MilestoneVideo · 架构与业务流程</title>
+  <style>
+    :root{color-scheme:light;--ink:#172c3d;--muted:#586e7f;--line:#d5dfe5;--blue:#146a91;--blue-soft:#edf7fc;--green:#1c7153;--amber:#97600c;--red:#b14b47;--paper:#f5f7f8}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}button,select{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #54a5ce;outline-offset:4px}a{color:var(--blue);text-underline-offset:3px}code{font:12px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}button,select{color:var(--ink)}
+    .shell{max-width:1520px;margin:auto;padding:38px 32px 28px}.eyebrow{font-size:12px;letter-spacing:2px;color:var(--blue);font-weight:700}.hero{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:26px}h1{font-size:32px;line-height:1.25;letter-spacing:-1px;margin:9px 0 12px}h2,h3,p{margin:0}.intro{color:var(--muted);max-width:770px}.snapshot{white-space:nowrap;text-align:right;color:var(--muted);font-size:12px}.snapshot strong{display:block;color:var(--ink);font-size:14px}
+    .scope{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:24px}.badge{padding:5px 11px;background:#fff;border:1px solid var(--line);border-radius:6px;font-size:12px}.badge strong{font-weight:600}.badge.future-badge{border-style:dashed;color:var(--muted)}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap}.tabs{display:flex;border-bottom:1px solid var(--line);gap:24px}.tab{border:0;border-bottom:3px solid transparent;background:none;padding:10px 0;font-weight:600;color:var(--muted)}.tab[aria-selected=true]{border-color:var(--blue);color:var(--blue)}.scenario{display:flex;gap:10px;align-items:center;font-size:13px}.scenario select{border:1px solid var(--line);border-radius:6px;background:#fff;padding:7px 10px;max-width:100%}[hidden]{display:none!important}
+    .workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}.map-panel{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.map-heading{display:flex;justify-content:space-between;gap:12px;padding:20px 22px 15px;border-bottom:1px solid #e8edf0}.map-heading h2{font-size:18px}.map-heading p{color:var(--muted);font-size:13px;margin-top:3px}.hint{font-size:12px;color:var(--muted);align-self:center;white-space:nowrap}.map-scroll{overflow:auto;scrollbar-gutter:stable}.canvas{position:relative;width:1040px;margin:0 auto;background-image:radial-gradient(#dfe6eb .8px,transparent .8px);background-size:18px 18px}.canvas svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.edge path{stroke:#b9c9d3;stroke-width:1.7;fill:none;marker-end:url(#arrow)}.edge.future path{stroke-dasharray:5 5}.edge text{fill:#5e7383;font-size:12px;font-family:inherit;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}.edge.active path{stroke:var(--blue);stroke-width:2.6;marker-end:url(#arrow-active)}.edge.active text{fill:var(--blue)}.edge.dim{opacity:.2}
+    .node{position:absolute;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left;background:#fff;border:1px solid #ccd8df;border-radius:8px;padding:12px 16px;box-shadow:0 3px 9px #193e5b07;transition:border-color .15s,background .15s,opacity .15s}.node:hover{border-color:var(--blue);background:#f5fbfe}.node.selected{border:2px solid var(--blue);padding:11px 15px;background:var(--blue-soft)}.node .tag{font-size:11px;color:var(--muted);letter-spacing:.5px;line-height:1.2;margin-bottom:5px}.node strong{font-size:15px;line-height:1.3;font-weight:650}.node .subtitle{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.35}.node.external{border-left:4px solid var(--blue)}.node.gate{border-left:4px solid var(--amber)}.node.stop{background:#fff7ef;border-left:4px solid var(--amber)}.node.failure{background:#fff6f5;border-left:4px solid var(--red)}.node.success{background:#f0faf5;border-left:4px solid var(--green)}.node.future{border-style:dashed;background:#f6f8fa}.node.in-path{background:#edf7fc;border-color:#2888b1}.node.dim{opacity:.35}
+    .legend{padding:12px 22px;display:flex;gap:18px;flex-wrap:wrap;border-top:1px solid #e8edf0;color:var(--muted);font-size:12px}.legend span{display:flex;align-items:center;gap:6px}.key{width:10px;height:10px;border-radius:2px;background:#fff;border:1px solid #a8bac6}.key.external{background:#d8edf7;border-color:var(--blue)}.key.gate{background:#f6e1bc;border-color:var(--amber)}.key.future{border-style:dashed}.key.stop{background:#f5d8d6;border-color:var(--red)}
+    .sidebar{position:sticky;top:20px}.detail{border:1px solid var(--line);background:#fff;border-radius:10px;padding:22px}.detail .label{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:1px}.detail h2{font-size:20px;line-height:1.4;margin:8px 0 10px}.detail>p{font-size:13px;color:var(--muted)}.detail-section{border-top:1px solid #e8edf0;margin-top:18px;padding-top:14px}.detail-section h3{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px}.detail ul{padding-left:19px;margin:0;font-size:13px}.detail li+li{margin-top:6px}.files{display:grid;gap:8px}.files a{font-size:12px;overflow-wrap:anywhere}.scenario-note{border-left:3px solid var(--blue);background:#edf6fa;padding:12px 16px;margin-bottom:14px;font-size:13px}.scenario-note strong{display:block;margin-bottom:3px}.footnote{font-size:12px;color:var(--muted);margin-top:16px;line-height:1.75}.limits{margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:20px}.limits section{border-top:1px solid var(--line);padding-top:16px}.limits h3{font-size:14px;margin-bottom:7px}.limits p{font-size:13px;color:var(--muted)}pre{margin:0;font:12px/1.8 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+    @media(min-width:1450px){.canvas{margin:auto}}@media(max-width:1120px){.workspace{grid-template-columns:1fr}.sidebar{position:static}.detail{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}.detail>.label,.detail>h2,.detail>p{grid-column:1/-1}.hero{align-items:start}.snapshot{display:none}}@media(max-width:600px){.shell{padding:24px 14px}h1{font-size:27px}.hero{margin-bottom:20px}.intro{font-size:13px}.scope{gap:6px}.badge{padding:4px 7px}.tabs{gap:22px}.scenario{width:100%;flex-wrap:wrap}.scenario select{flex:1;min-width:180px}.map-heading{padding:16px}.hint{display:none}.detail{display:block;padding:18px}.limits{grid-template-columns:1fr}.canvas{margin:0}.legend{gap:12px;padding:12px 16px}}
+    @media(prefers-reduced-motion:reduce){*{transition:none!important}}@media print{.toolbar,.hint{display:none}.shell{padding:0}.workspace{display:block}.sidebar{position:static}.map-scroll{overflow:visible}.canvas{transform:scale(.65);transform-origin:top left;margin-bottom:-32%}.detail{break-inside:avoid}.limits{break-inside:avoid}}
+  </style>
+</head>
+<body>
+<main class="shell">
+<p><a href="architecture-flow.html">English</a> · 中文</p>
+  <header class="hero"><div><div class="eyebrow">MILESTONE VIDEO / SYSTEM MAP</div><h1>从一张主页截图，到用户判断的庆祝视频</h1><p class="intro">技术架构与业务逻辑的可交互源码地图。点击节点查看职责、数据和实现文件；切换业务场景，观察效果选择、手动重生成与恢复的实际边界。</p></div><div class="snapshot"><strong>源码快照 · 2026 / 10 / 12</strong>MilestoneVideo · CLI MVP</div></header>
+  <div class="scope" aria-label="当前能力与扩展范围"><span class="badge"><strong>视频</strong> H3 Max · 768P · 15s</span><span class="badge"><strong>交付</strong> Remotion · 1080 × 1920</span><span class="badge"><strong>当前</strong> English / 简体中文 · X / Twitter</span><span class="badge"><strong>默认尝试</strong> 1 次 · 不自动重生成</span><span class="badge future-badge">待扩展：多平台 / 其他服务商</span></div>
+  <div class="toolbar"><nav class="tabs" role="tablist" aria-label="流程视图"><button type="button" class="tab" id="tab-architecture" role="tab" aria-selected="true" aria-controls="map-panel" data-view="architecture">技术架构</button><button type="button" class="tab" id="tab-business" role="tab" aria-selected="false" aria-controls="map-panel" data-view="business">业务流程</button></nav><label class="scenario" id="scenario-control" hidden>查看分支<select id="scenario"><option value="all">完整流程</option><option value="normal">单次生成 → 直接导出</option><option value="custom">自定义效果 → 冻结提示词</option><option value="regenerate">不满意 → 新任务再生成</option><option value="recover">请求 / 渲染异常 → resume</option></select></label></div>
+  <div class="scenario-note" id="scenario-note" aria-live="polite" hidden></div>
+  <div class="workspace"><section class="map-panel" id="map-panel" role="tabpanel" aria-labelledby="tab-architecture"><div class="map-heading"><div><h2 id="map-title">技术架构 · 轻量模块，文件驱动</h2><p id="map-subtitle">Node.js / TypeScript 编排；外部模型生成；FFmpeg 画布 / FFprobe 元数据；Remotion 交付。</p></div><span class="hint">点击节点 · 窄屏横向滚动</span></div><div class="map-scroll"><div class="canvas" id="canvas"></div></div><div class="legend"><span><i class="key" aria-hidden="true"></i>本地模块 / 文件</span><span><i class="key external" aria-hidden="true"></i>外部模型调用</span><span><i class="key gate" aria-hidden="true"></i>输入 / 渲染前提</span><span><i class="key stop" aria-hidden="true"></i>失败分支</span><span><i class="key future" aria-hidden="true"></i>尚未实现</span></div></section><aside class="sidebar"><section class="detail" id="detail" aria-live="polite" aria-label="所选节点详情"></section></aside></div>
+  <div class="limits"><section><h3>completed 不等于质量通过</h3><p>没有自动视觉 QA、亮度拒绝、选优或人工批准步骤。FFprobe 仅提供渲染必需的时长、fps 与尺寸。生成的页面漂移、重复角色、数字错误由用户判断；不满意可付费新建任务。</p></section><section><h3>效果与扩展边界</h3><p>默认 peace-sign：数字副本落到蛋糕、蜡烛持续燃烧、V 手势与彩纸。blow-out 保留旧效果；custom 使用文本模板。英文为默认收尾字幕，另支持 zh-CN；当前平台仅 Twitter。默认 V6 仍可能出现页面变暗、托盘和脚下阴影。多平台、绿幕分层与免费模板尚未实现。</p></section></div>
+  <footer class="footnote">依据 <code>MilestoneVideo/src</code> 当前源码整理；保存为独立 HTML，可离线打开，无外部依赖、无 API 调用、无密钥。场景高亮仅解释代码分支，不代表正在运行的任务。费用为代码中的静态估算，不是实时报价或最终账单。</footer>
+</main>
+<script>
+'use strict';
+const N = (id,x,y,title,subtitle,kind,body,input,output,rules,files,w=260) => ({id,x,y,title,subtitle,kind,body,input,output,rules,files,w,h:84});
+const E = (from,to,points,label='',labelAt=null,kind='') => ({from,to,points,label,labelAt,kind});
+const architecture = {
+  height:1000, defaultNode:'pipeline',
+  nodes:[
+    N('profile',35,40,'截图 → profile.json','可选独立命令 · Gemini','external','视觉模型仅用于独立档案提取，不在 generate 中核验视频。','截图','新 profile.json',['用户自行核对 Followers 与 Following。','不确定则不写文件；rightsConfirmed=false。'],['src/cli.ts','src/qa/fal-openrouter.ts']),
+    N('cli',390,40,'CLI 与输入参数','profile · generate · resume · qa','','加载项目 .env，验证选项与已知生成估算。','参数 / FAL_KEY / 文件','单次任务或恢复调用',['默认 H3 Max、768P、en、twitter、peace-sign。','max-attempts 仅接受 1；旧 review 命令移除。','qa 仅可选本地开发诊断，不影响任务。'],['src/cli.ts','src/domain/validation.ts']),
+    N('state',745,40,'冻结计划与恢复记录','原子 JSON · 本地任务锁','','按 requestId 保存进度与估算费用，避免恢复重复提交。','输入 / 请求回执','plan.json / result.json',['提交后先保存 ID，再等待。','completed 表示导出成功，不表示质量通过。','历史 QA 文件与旧 prompt 不被自动改写。'],['src/pipeline/state.ts','src/pipeline/run.ts']),
+    N('domain',35,230,'语言 / 平台 / 档案','Profile · en / zh-CN · twitter','gate','本地参数与头像分类，和模型 API 参数分离。','profile / locale / platform','场景数据与 closingText',['unknown 头像先明确；未核实人物权利只提醒。','公开截图不自动变成授权确认。','支持 en / zh-CN 收尾字幕；CLI 诊断为英文，TikTok / 小红书尚未实现。'],['src/domain/profile.ts','src/characters/policy.ts','src/locales/en.ts','src/locales/zh-CN.ts','src/platforms/twitter.ts']),
+    N('pipeline',390,230,'单次生成编排','角色 → 视频 → 元数据 → 导出','','删除自动质检、候选选择、质量重试、人工批准。','冻结计划 / 小型 provider 接口','raw + final + result',['一项新任务最多一次视频提交。','恢复已有请求或视频不是重新生成。','不满意由用户新建付费任务。'],['src/pipeline/run.ts','src/domain/types.ts']),
+    N('effects',745,230,'内置效果 / 自定义模板','peace-sign · blow-out · custom','','效果脚本描述动作，provider 补充模型专用参考语法。','场景数据 / UTF-8 模板','提示词 + effect + 模板 SHA-256',['默认 V6：自然出场、空黑头像、指数字、彩色数字蜡烛、V 手势、彩纸。','旧效果：金框、数字蜡烛、吹灭、挥手。','自定义仅文本替换，不执行代码；原文和渲染结果冻结。'],['src/effects/index.ts','src/effects/peace-sign.ts','src/scenes/milestone.ts']),
+    N('character',35,430,'角色三视图','Nano Banana 2 / 用户角色','external','人物卡通化；非人物化为吉祥物，或 generic 原创角色。','原图 / avatarKind / mode','input/character.*',['自带角色跳过收费步骤。','代码估算 $0.08，非权威账单。','已有角色 requestId 时复用。'],['src/characters/nano-banana-2.ts','src/characters/prompt.ts']),
+    N('video',390,430,'H3 Max · 768P · 15s','截图首帧 + 单一角色参考','external','首帧截图用 image_url，角色单独作为参考，关闭 prompt expansion。','冻结 prompt / 图片','attempts/01/raw.mp4',['代码估算 $1.20；额外参考费用另计。','安全检查开启，12 分钟请求截止。','普通 H3 可选，参考图语法由其 provider 处理。'],['src/providers/minimax-h3-max/index.ts','src/providers/minimax-h3/index.ts','src/providers/types.ts']),
+    N('queue',745,430,'外部 fal 请求生命周期','上传 / 提交 / 轮询 / 下载','','超时、错误分类、取消与已知 ID 恢复。','payload / existingRequestId','receipt / ProviderFailure',['无 ID 的未知提交不能盲目再收费。','安全拒绝 / 无效终态需人工对账。','这不是本地队列服务。'],['src/providers/fal-queue.ts']),
+    N('media',35,630,'本地媒体准备与元数据','FFmpeg 画布 · FFprobe 读取','','等比白边首帧，读取渲染所需信息；不检查场景质量。','截图 / raw.mp4','9:16 图 / VideoMetadata',['不因黑背景、无音轨或动作错误拒绝交付。','无法读取有效时长 / fps / 尺寸仍会失败。','旧 QA 模块保留作可选开发诊断。'],['src/pipeline/screenshot-canvas.ts','src/pipeline/media.ts']),
+    N('remotion',390,630,'Remotion 精确收尾字幕','动态时长 · 1080×1920','','最后三秒添加准确感谢文字和浅色局部面板。','raw / closingText / 元数据','final.mp4',['contain 不裁切；保留源音轨。','不修复模型生成的错误字符或页面变形。','导出完成即可 completed，不再执行 final QA。'],['src/pipeline/remotion-renderer.ts','src/remotion/index.tsx','src/remotion/MilestoneComposition.tsx']),
+    N('artifacts',745,630,'输出与成本账本','新任务无 QA / selected 文件','','保留输入、角色、单次 raw、精确字幕视频与恢复记录。','阶段进度 / 请求 ID','独立 runs/<job>/',['qualityGate=disabled。','实际账单未知则 actualTotalUsd=null。','profile 独立请求费用不并入视频任务。'],['src/pipeline/run.ts','src/domain/types.ts']),
+    N('future',35,850,'扩展点不是已实现功能','多平台 / 新 provider / 免费模板','future','通过已有小接口新增经验证的能力，不引入复杂插件系统。','未来明确需求','新增定义 / 适配器 / 测试',['当前不存在免费模板或手写文字 / 数字滚动。','绿幕合成、批量基准、自动清理仍未实现。'],['src/locales/index.ts','src/platforms/index.ts','src/providers/types.ts'],970)
+  ],
+  edges:[
+    E('profile','cli',[[295,82],[390,82]],'可选档案',[342,69]),
+    E('cli','pipeline',[[520,124],[520,230]]),
+    E('domain','pipeline',[[295,272],[390,272]]),
+    E('pipeline','state',[[650,250],[710,250],[710,150],[875,150],[875,124]]),
+    E('effects','pipeline',[[745,272],[650,272]],'场景',[697,259]),
+    E('pipeline','video',[[520,314],[520,430]]),
+    E('character','video',[[295,472],[390,472]],'角色',[342,459]),
+    E('video','queue',[[650,472],[745,472]],'请求',[697,459]),
+    E('video','remotion',[[520,514],[520,630]],'下载 raw',[565,579]),
+    E('media','remotion',[[295,672],[390,672]]),
+    E('remotion','artifacts',[[650,672],[745,672]],'导出',[697,659])
+  ]
+};
+const business = {
+  height:1170, defaultNode:'generate',
+  nodes:[
+    N('extract',25,30,'可选：提取并核对档案','profile 命令 / 用户确认','','独立生成档案，用户核对元数据；不在视频流水线自动校验截图。','截图','profile.json',['生成时信任确认后的档案。','人物权利未核实保留 false，不阻断。'],['src/cli.ts']),
+    N('input',365,30,'新任务 generate','截图 + profile + 可选角色','','指定新输出目录与效果。','本地输入','单次任务',['已有目录拒绝覆盖。','默认 peace-sign，H3 Max 768P。'],['src/cli.ts'],280),
+    N('validate',365,155,'本地参数与预算','一项任务一次视频','gate','确认头像类别、参数、自定义占位符和已知估算。','档案 / effect / budget','通过或本地报错',['不做视觉质量判断。','默认估算 $1.28，自带角色 $1.20；参考附加费另计。'],['src/domain/validation.ts','src/effects/index.ts','src/cli.ts'],280),
+    N('custom',735,155,'可选：自定义动作','--prompt-file → custom','','known placeholders 文本替换；不执行模板代码。','UTF-8 文本','模板原文 / SHA-256 / 渲染 prompt',['followers / displayName / handle / platform。','不改变 API 分辨率和时长。'],['src/effects/index.ts','examples/custom-effect.txt']),
+    N('freeze',365,280,'冻结计划与输入','等比白边 9:16 · plan / result','','保存截图、档案、effect、prompt、模型参数和自定义文本。','validated 输入','input/ + plan.json',['resume 不自动更新旧提示词。','JSON 原子写入，任务锁防并发。'],['src/pipeline/run.ts','src/pipeline/state.ts'],280),
+    N('character',365,405,'角色三视图','Nano Banana 2 / 自带角色','external','先准备单一角色；自带图直接跳过生成。','原始截图 / avatarKind','input/character.*',['首次角色收费约 $0.08。','已有 ID 恢复同一请求。'],['src/characters/nano-banana-2.ts'],280),
+    N('generate',365,530,'一次视频生成','H3 Max · 768P · 15s','external','提交并记录 ID / 成本，然后轮询和下载。不因质量再生成。','首帧截图 / 角色 / prompt','attempts/01/raw.mp4',['默认 V 手势 / 常亮蜡烛 / 彩纸。','旧 blow-out 可选；V6 要求全程保留背景亮度，但模型仍可能变暗。'],['src/providers/minimax-h3-max/index.ts','src/pipeline/run.ts'],280),
+    N('recover',25,530,'resume：只恢复','已知 requestId / 已下载 raw','','继续同一请求或重做本地导出，不产生新的质量候选。','冻结计划 / checkpoint','恢复等待、下载或渲染',['未知提交无 ID / 拒绝终态先对账。','completed 直接返回原记录。'],['src/pipeline/run.ts']),
+    N('transport',735,530,'请求异常 / 未知结果','needs_review','stop','暂停请求生命周期，不是语义 QA 不合格。','ProviderFailure','错误 / requestId / 费用',['已知 ID 可以恢复原请求。','无 ID 未知提交、安全拒绝、无效终态不能盲目重提。'],['src/providers/fal-queue.ts','src/pipeline/run.ts']),
+    N('metadata',365,655,'读取渲染元数据','FFprobe · 非质量闸门','','仅读取时长 / fps / 宽高 / 音轨标记。','raw.mp4','VideoMetadata',['不做亮度、音频静音、动作或数字 QA。','不可读的媒体无法渲染。'],['src/pipeline/media.ts'],280),
+    N('render',365,780,'Remotion 导出收尾字幕','最后 3 秒 · 精确本地文字','','直接使用这次 raw，按源时长和 fps 渲染。','raw + metadata + closingText','final.mp4',['1080×1920 / contain / 浅色局部面板。','无最终 QA 或人工 review 命令。'],['src/pipeline/remotion-renderer.ts'],280),
+    N('failure',735,780,'角色 / 读取 / 导出失败','failed','failure','保存原因；可恢复本地错误复用已有素材。','运行异常','result.failureReason',['失败不会伪装导出成功。','不是质量失败触发付费重试。'],['src/pipeline/run.ts']),
+    N('complete',365,905,'completed：导出完成','不等于视觉质量通过','success','用户观看成片并决定满意与否，无程序验收。','final.mp4','用户可下载 / 查看',['qualityGate=disabled。','旧 QA 结果不会改写成 passed。'],['src/domain/types.ts','src/pipeline/run.ts'],280),
+    N('regenerate',25,1030,'不满意：新建任务','用户显式付费再生成','','新 --out；可复用角色、改效果或模板。','用户判断 / 新参数','新的单次视频任务',['不是 resume，也没有质量自动重试。','自带旧角色避免另一笔角色费。'],['src/cli.ts','README.md'])
+  ],
+  edges:[
+    E('extract','input',[[285,72],[365,72]]), E('input','validate',[[505,114],[505,155]]),
+    E('custom','validate',[[735,197],[645,197]]), E('validate','freeze',[[505,239],[505,280]]),
+    E('freeze','character',[[505,364],[505,405]]), E('character','generate',[[505,489],[505,530]]),
+    E('recover','generate',[[285,572],[365,572]],'同一请求',[325,559]),
+    E('generate','transport',[[645,572],[735,572]],'异常',[690,559]),
+    E('generate','metadata',[[505,614],[505,655]]), E('metadata','render',[[505,739],[505,780]]),
+    E('render','failure',[[645,822],[735,822]],'异常',[690,809]),
+    E('character','failure',[[645,447],[1020,447],[1020,822],[995,822]]),
+    E('metadata','failure',[[645,697],[700,697],[700,801],[735,801]]),
+    E('render','complete',[[505,864],[505,905]]),
+    E('complete','regenerate',[[365,947],[155,947],[155,1030]],'用户不满意',[240,934]),
+    E('regenerate','input',[[25,1072],[10,1072],[10,15],[505,15],[505,30]],'新任务',[190,16])
+  ]
+};
+const scenarios = {
+  all:{nodes:[],edges:[],title:'',text:''},
+  normal:{nodes:['input','validate','freeze','character','generate','metadata','render','complete'],edges:['input>validate','validate>freeze','freeze>character','character>generate','generate>metadata','metadata>render','render>complete'],title:'一项任务，一次视频，直接导出',text:'不跑自动视觉或技术质量 QA，不选优，不等待人工批准。completed 仅代表文件导出完成。'},
+  custom:{nodes:['custom','validate','freeze','character','generate','metadata','render','complete'],edges:['custom>validate','validate>freeze','freeze>character','character>generate','generate>metadata','metadata>render','render>complete'],title:'自定义文本是场景，不是代码或 API 参数',text:'模板与 hash 保存在 plan；原文复制到 input。resume 继续冻结后的 prompt，不读取已修改的外部模板。'},
+  regenerate:{nodes:['complete','regenerate','input','validate','freeze','character','generate'],edges:['complete>regenerate','regenerate>input','input>validate','validate>freeze','freeze>character','character>generate'],title:'是否再花钱，由用户决定',text:'用户不满意时显式 generate 到新的 --out。可复用角色或换 blow-out / custom。程序不会因为画面质量继续收费。'},
+  recover:{nodes:['recover','generate','transport','metadata','render','failure','complete'],edges:['recover>generate','generate>transport','generate>metadata','metadata>render','metadata>failure','render>failure','render>complete'],title:'恢复与重生成是两件事',text:'resume 使用同一 requestId 或 raw，渲染失败可重做本地交付。未知提交无 ID 与终态拒绝需要服务端核对，不会盲目新付费提交。'}
+};
+const graphs={architecture,business};
+const canvas=document.getElementById('canvas');
+const detail=document.getElementById('detail');
+let currentView='architecture';
+let selectedId=architecture.defaultNode;
+const ns='http://www.w3.org/2000/svg';
+function svgElement(tag,attrs={}){const element=document.createElementNS(ns,tag);for(const [key,value] of Object.entries(attrs))element.setAttribute(key,String(value));return element;}
+function htmlElement(tag,className,text){const element=document.createElement(tag);if(className)element.className=className;if(text!==undefined)element.textContent=text;return element;}
+function render(){
+  const graph=graphs[currentView];canvas.replaceChildren();canvas.style.height=graph.height+'px';
+  const svg=svgElement('svg',{viewBox:`0 0 1040 ${graph.height}`,'aria-hidden':'true'});
+  const defs=svgElement('defs');
+  for(const [id,color] of [['arrow','#b9c9d3'],['arrow-active','#146a91']]){const marker=svgElement('marker',{id,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto'});marker.append(svgElement('path',{d:'M 0 0 L 10 5 L 0 10 z',fill:color}));defs.append(marker);}svg.append(defs);
+  graph.edges.forEach(edge=>{const group=svgElement('g',{class:'edge '+edge.kind,'data-edge':edge.from+'>'+edge.to});group.append(svgElement('path',{d:edge.points.map((p,i)=>(i?'L':'M')+p.join(' ')).join(' ')}));if(edge.label){const pos=edge.labelAt;const text=svgElement('text',{x:pos[0],y:pos[1],'text-anchor':'middle'});text.textContent=edge.label;group.append(text);}svg.append(group);});canvas.append(svg);
+  graph.nodes.forEach(node=>{const button=htmlElement('button','node '+node.kind);button.type='button';button.dataset.node=node.id;button.style.cssText=`left:${node.x}px;top:${node.y}px;width:${node.w}px;height:${node.h}px`;button.setAttribute('aria-pressed',String(node.id===selectedId));button.append(htmlElement('span','tag',node.kind==='future'?'FUTURE · 未实现':node.kind==='external'?'MODEL / API':node.kind==='gate'?'CHECKPOINT':node.kind==='failure'?'FAILED':node.kind==='stop'?'NEEDS ATTENTION':node.kind==='success'?'COMPLETED':'LOCAL / CORE'),htmlElement('strong','',node.title),htmlElement('span','subtitle',node.subtitle));button.addEventListener('click',()=>selectNode(node.id));canvas.append(button);});
+  selectNode(selectedId);
+}
+function detailSection(title,values){const section=htmlElement('div','detail-section');section.append(htmlElement('h3','',title));if(Array.isArray(values)){const list=htmlElement('ul');values.forEach(value=>list.append(htmlElement('li','',value)));section.append(list);}else section.append(htmlElement('p','',values));return section;}
+function selectNode(id){
+  const node=graphs[currentView].nodes.find(item=>item.id===id);if(!node)return;selectedId=id;
+  detail.replaceChildren(htmlElement('div','label',currentView==='architecture'?'MODULE DETAIL / 技术节点':'FLOW DETAIL / 业务节点'),htmlElement('h2','',node.title),htmlElement('p','',node.body),detailSection('输入',node.input),detailSection('输出',node.output),detailSection('真实规则与边界',node.rules));
+  const section=htmlElement('div','detail-section');section.append(htmlElement('h3','','源码位置（相对项目根目录）'));const files=htmlElement('div','files');node.files.forEach(file=>{const link=htmlElement('a','',file);link.href='../'+file;link.target='_blank';link.rel='noopener';files.append(link);});section.append(files);detail.append(section);
+  if(id==='artifacts'){const tree=htmlElement('pre','','runs/<job>/\n  input/\n    profile.json\n    screenshot.*\n    screenshot-9x16.png\n    character.*\n    custom-prompt.txt (optional)\n  plan.json\n  attempts/01/raw.mp4\n  final.mp4\n  result.json\n  remotion-assets/source.mp4');const filesSection=htmlElement('div','detail-section');filesSection.append(htmlElement('h3','','文件地图'),tree);detail.append(filesSection);}
+  updateHighlights();
+}
+function updateHighlights(){
+  const value=currentView==='business'?document.getElementById('scenario').value:'all';const scenario=scenarios[value];
+  canvas.querySelectorAll('[data-node]').forEach(button=>{const selected=button.dataset.node===selectedId;button.classList.toggle('selected',selected);button.setAttribute('aria-pressed',String(selected));button.classList.toggle('in-path',scenario.nodes.includes(button.dataset.node));button.classList.toggle('dim',value!=='all'&&!scenario.nodes.includes(button.dataset.node)&&!selected);});
+  canvas.querySelectorAll('[data-edge]').forEach(group=>{const key=group.dataset.edge;const adjacent=key.split('>').includes(selectedId);const inPath=scenario.edges.includes(key);group.classList.toggle('active',value==='all'?adjacent:inPath);group.classList.toggle('dim',value!=='all'&&!inPath);});
+  const note=document.getElementById('scenario-note');note.hidden=value==='all';note.replaceChildren();if(value!=='all')note.append(htmlElement('strong','',scenario.title),htmlElement('span','',scenario.text));
+}
+function switchView(view){
+  currentView=view;selectedId=graphs[view].defaultNode;
+  document.querySelectorAll('[data-view]').forEach(tab=>tab.setAttribute('aria-selected',String(tab.dataset.view===view)));
+  document.getElementById('map-panel').setAttribute('aria-labelledby','tab-'+view);
+  document.getElementById('scenario-control').hidden=view!=='business';
+  document.getElementById('map-title').textContent=view==='architecture'?'技术架构 · 轻量模块，文件驱动':'业务流程 · 单次生成，用户判断';
+  document.getElementById('map-subtitle').textContent=view==='architecture'?'Node.js / TypeScript 编排；外部模型生成；FFmpeg 画布 / FFprobe 元数据；Remotion 交付。':'沿中间主线向下阅读；侧边是自定义效果、请求恢复与用户新任务。';
+  render();
+}
+document.querySelectorAll('[data-view]').forEach(button=>{button.addEventListener('click',()=>switchView(button.dataset.view));button.addEventListener('keydown',event=>{if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();const view=currentView==='architecture'?'business':'architecture';switchView(view);document.getElementById('tab-'+view).focus();}});});
+document.getElementById('scenario').addEventListener('change',()=>{const first={normal:'complete',custom:'custom',regenerate:'regenerate',recover:'recover',all:'generate'};selectNode(first[document.getElementById('scenario').value]);});
+render();
+</script>
+</body>
+</html>

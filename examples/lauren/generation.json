@@ -1,0 +1,44 @@
+{
+  "example": "Lauren (@poteto), V6",
+  "generatedAt": "2026-10-12T16:07:01.472Z",
+  "platform": "twitter",
+  "locale": "en",
+  "provider": "minimax-h3-max",
+  "model": "minimax/h3-max/reference-to-video",
+  "promptFile": "../peace-sign-v6.zh-CN.txt",
+  "templateSha256": "abcc4d5579a8d6887cb3977cf47cf00decf890ce71b6e21793f654bcea33d7de",
+  "promptVersion": "custom-v1-abcc4d5579a8d6887cb3977cf47cf00decf890ce71b6e21793f654bcea33d7de",
+  "renderedPrompt": "The exact first-frame image is the profile screenshot. Image 1 is the cartoon character turnaround sheet and is the only animated character reference.\nCreate a 15-second vertical 9:16 video using the supplied screenshot and single character reference.\n【参考素材与画面】\n生成一段 15 秒、9:16、固定机位的二维插画动画。\n个人主页截图是唯一背景和版式参考；角色设定图只提供同一个人的脸、发型、眼镜、服装、身体比例与画风，不带入设定图的底色或布光。参考图编号以本提示词前面的模型说明为准。\n\n整张主页像一张正面铺满画面的静态图片，四边与画框平行。白色页面和上下留白从头到尾保持首帧的明亮白色。横幅、按钮、图标、简介、帖子文字及帖子内的图片缩略图都保持首帧状态；缩略图只是静态图片，不启动播放，也不切换内容。镜头、页面大小、位置和曝光固定。\n表演发生在这张平面图片前，只有一个角色、一个小蛋糕、数字蜡烛和少量纸屑在动。角色大小以全身可见、姓名和原始粉丝数字可读为准。\n\n【头像离开后的状态】\n主头像圆框是角色出场的小入口。角色离开时，圆内原来的人像同步移出；离开后仅这个圆框内部留下纯黑色空圆，边框和位置不变。这个局部填色是唯一允许的页面修改，其他小头像保持原样。\n\n【动作顺序】\n0.0–1.4 秒：角色先在头像圆框里轻轻眨眼，看一眼下方的页面，再看向准备过去的位置，露出一点期待的微笑。肩膀微微前倾，双手自然扶上圆框边缘，准备出场。\n\n1.4–4.0 秒：上半身先探出，一只脚跨过圆框，再带出另一只脚，松手做一个短促轻巧的小跳。身体沿连贯的小弧线移到页面下方偏右的空处。双脚停在画面中的同一高度，膝盖稍弯、重心轻轻下沉，再自然直起；手臂小幅展开保持平衡，头发和衣角晚半拍收住。像二维动画人物在页面前完成一次轻巧落稳，脚下仍完整露出原页面，脚不接触任何物体。动作只收一次，不持续弹跳或上下漂移。\n\n4.0–5.5 秒：站姿稳定后，角色先转眼看向原页面右侧的“181.9K Followers”，再抬手指向它，视线与指尖指向同一处。左侧 Following 不参与表演。原数字保持普通 UI 文字的颜色和亮度，靠手势表达关注。\n\n5.5–9.0 秒：角色顺着手势看向身旁。一只小巧的二维奶油蛋糕从画面左侧平稳滑入，停在角色身旁偏下的位置，和角色一样位于页面前。蛋糕底部直接是蛋糕本体，下方继续看得到原页面，没有盘子、托板或支撑物。\n从原粉丝数字的位置出现一份前景副本“181.9K”，保持一整行的次序和间距，沿短弧线一起落向蛋糕，变成插在蛋糕上的哑光彩色蜡制数字蜡烛。每个数字、小数点、逗号和 K/M 后缀都与原数字一致；蜡烛合起来只读作“181.9K”。原页面的粉丝统计仍原封不动地留在原位。\n\n9.0–12.0 秒：蜡烛顶端依次出现小小的火苗。角色看一眼蛋糕，满意地轻轻点头，再转向镜头，头部自然摆正、眼睛睁开、闭嘴微笑，抬起一只手比 V：食指和中指伸出，其余手指收起。动作从看蛋糕自然接到看观众。\n\n12.0–15.0 秒：保持这个轻松的姿态和清楚可读的数字蜡烛，少量彩色纸屑缓缓落下。火苗持续小幅摆动，人物只有细微呼吸和衣角余动。最后约 0.7 秒姿态稳定，便于看清表情和蛋糕。\n\n【全程约束】\n页面采用均匀的平面插画亮度；小火苗只画在烛芯处，不改变周围颜色或曝光。不用聚光、光晕、金色发光数字或暗角。\n人物脚下和蛋糕下方始终显示原页面；不添加桌子、地面、台座、投影或幕布。上下留白也属于原截图画面，保持原色，不另造场景。\n后期字幕只会覆盖在现有画面上；预留的意思仅是让角色、手和火苗避开最下方区域，不清除该区域的帖子、图片或留白，不绘制底板。\n原有文字保留。唯一新增的文字形状是上述粉丝数字副本及对应的数字蜡烛。不生成其他文字、字幕、气泡、标语、标志或水印。\n仅有参考图中的一个角色，由角色自己的手完成动作，保持原插画风格。\n音频为轻快的纯器乐与轻柔的出场、数字落下和点火音效，无对白、旁白或人声。\n\nKeep the original profile number \"181.9K Followers\" visible and unchanged, not the Following count. Keep screenshot proportions and a fixed camera. Reserve the lower caption area for exact closing text added by Remotion. Do not generate captions or dialogue. Include instrumental music and appropriate sound effects.",
+  "requestSettings": {
+    "promptExpansionMode": "disabled",
+    "enableSafetyChecker": true
+  },
+  "requestedDurationSeconds": 15,
+  "requestedResolution": "768P",
+  "export": {
+    "width": 1080,
+    "height": 1920,
+    "durationSeconds": 15.125,
+    "fps": 24,
+    "hasAudio": true,
+    "closingText": "Thank you for 181.9K followers"
+  },
+  "character": "supplied/reused",
+  "videoRequests": 1,
+  "estimatedVideoCostUsd": 1.2,
+  "actualVideoCostUsd": null,
+  "knownLimitations": [
+    "Page dimming and localized lighting",
+    "Cake platter and foot shadows",
+    "Closed eyes in the final pose",
+    "Minor UI/text drift"
+  ],
+  "mediaPermission": "Repository display and download only; original copyright retained; excluded from MIT. See MEDIA_LICENSE.txt.",
+  "sha256": {
+    "screenshot.png": "dd4441c7ac53ac0631dec8fed9fec57c300c2390c5bd2fc0e1f20a7ef5580056",
+    "character.png": "5af24128801e5eca7f8928bd3bf536e694b606ccc26cb3ee79c40fe64e1fe49d",
+    "profile.json": "b20f0b10b3952b8c0d83b48bd5bd610a6f56f42b313124291b4971a0d7f96d4b",
+    "video.mp4": "228ca2df5e5a8b2d1b02de82b291895e90547fbadab2aae108122050ed2707c8",
+    "preview.jpg": "6c4b64a7c55f523eeea39603fafe1a9c54182d7903b7dac95571c169cbd3b7c1"
+  }
+}
