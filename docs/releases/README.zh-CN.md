@@ -2,7 +2,7 @@
 
 [English](README.md) · **中文**
 
-已发布 GitHub 版本：**v0.1 开发者 Alpha**，标签 `v0.1.0-alpha.1`，**Pre-release**，仓库已公开。独立 npm 包准备为 `milestone-video@0.1.0-alpha.2`，使用 `alpha` 分发标签。
+已发布 GitHub 版本：**v0.1 开发者 Alpha**，标签 `v0.1.0-alpha.1`，**Pre-release**，仓库已公开。独立 npm 包已于 2026 年 10 月 12 日发布为 [`milestone-video@0.1.0-alpha.2`](https://www.npmjs.com/package/milestone-video/v/0.1.0-alpha.2)，使用 `alpha` 分发标签。注册表完整性与已测试的 tarball 一致，仅安装生产依赖及中英文视频导出均通过。
 
 ## 远端历史与认证
 

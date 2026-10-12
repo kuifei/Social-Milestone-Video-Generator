@@ -2,7 +2,7 @@
 
 **English** · [中文](README.zh-CN.md)
 
-Published GitHub release: **v0.1 Developer Alpha**, tag `v0.1.0-alpha.1`, **Pre-release**. The repository is Public. The standalone npm package is prepared as `milestone-video@0.1.0-alpha.2`, under the `alpha` distribution tag.
+Published GitHub release: **v0.1 Developer Alpha**, tag `v0.1.0-alpha.1`, **Pre-release**. The repository is Public. The standalone npm package was published on October 12, 2026 as [`milestone-video@0.1.0-alpha.2`](https://www.npmjs.com/package/milestone-video/v/0.1.0-alpha.2), under the `alpha` distribution tag. Its registry integrity matches the tested tarball; production-only installation and English/Chinese video exports passed.
 
 ## Remote history and authentication
 
