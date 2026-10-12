@@ -12,19 +12,42 @@
 
 Milestone Video 从主页头像生成插画角色，让角色走出头像，用蛋糕庆祝粉丝数字，最后导出带准确收尾字幕的 1080×1920 视频。默认使用英文收尾字幕，也支持简体中文。
 
-这是开发者 Alpha，流程为 **生成一次 → 直接导出 → 用户观看判断**。`completed` 仅表示文件导出完成，不代表画面、档案数据或媒体授权通过核验。目前通过克隆仓库在本地运行，尚未发布独立 npm 包。
+这是开发者 Alpha，流程为 **生成一次 → 直接导出 → 用户观看判断**。`completed` 仅表示文件导出完成，不代表画面、档案数据或媒体授权通过核验。可以使用独立 CLI，也可以克隆源码运行。
 
 ## 公开示例
 
-[![Lauren V6 预览](examples/lauren/preview.jpg)](examples/lauren/video.mp4)
+[![Lauren V6 预览](https://raw.githubusercontent.com/kuifei/Social-Milestone-Video-Generator/main/examples/lauren/preview.jpg)](https://github.com/kuifei/Social-Milestone-Video-Generator/blob/main/examples/lauren/video.mp4)
 
-[Lauren V6 示例与复现命令](examples/lauren/README.zh-CN.md) · [下载视频](examples/lauren/video.mp4)
+[Lauren V6 示例与复现命令](https://github.com/kuifei/Social-Milestone-Video-Generator/blob/main/examples/lauren/README.zh-CN.md) · [下载视频](https://github.com/kuifei/Social-Milestone-Video-Generator/blob/main/examples/lauren/video.mp4)
 
-采用最后一版 V6 成片，使用中文原始提示词和英文收尾字幕。包含截图、角色参考图、档案、原始参数及已知限制。媒体**仅允许仓库展示和下载，不适用 MIT**；详见[媒体说明](examples/lauren/MEDIA_LICENSE.txt)。
+采用最后一版 V6 成片，使用中文原始提示词和英文收尾字幕。包含截图、角色参考图、档案、原始参数及已知限制。媒体**仅允许仓库展示和下载，不适用 MIT**；详见[媒体说明](https://github.com/kuifei/Social-Milestone-Video-Generator/blob/main/examples/lauren/MEDIA_LICENSE.txt)。
 
 ## 快速开始
 
 需要 Node.js 22+、`PATH` 中的 FFmpeg 和 FFprobe，以及 fal API 密钥。中文字幕还需要系统安装中文字体，例如 Linux 上的 Noto Sans CJK SC；macOS 和 Windows 使用系统后备字体。
+
+### 独立 CLI（npm）
+
+```bash
+npm install -g milestone-video@alpha
+milestone-video --help
+milestone-video --version
+```
+
+也可以免全局安装运行：`npx milestone-video@alpha --help`。
+
+在自己的工作目录使用，在该目录的 `.env` 或进程环境中设置 `FAL_KEY`。可以手填包含 `displayName`、`handle`、`followers`、`avatarKind`（`person` 或 `non-person`）和 `rightsConfirmed` 的 profile JSON，也可以付费提取：
+
+```bash
+milestone-video profile --screenshot /absolute/path/x-profile.png --out profiles/draft.json
+# 核对提取字段和头像类别后再生成。
+milestone-video generate --profile profiles/draft.json \
+  --screenshot /absolute/path/x-profile.png --out runs/creator-v1
+```
+
+npm 包包含编译后的程序和文本/JSON 模板，安装后无需 TypeScript 构建，不包含 Lauren 媒体。使用独立 CLI 时，将下文源码示例中的 `npm run dev --` 替换为 `milestone-video`（或 `npx milestone-video@alpha`），输入素材和自定义提示词使用自己的文件路径。
+
+### 克隆源码运行
 
 ```bash
 git clone https://github.com/kuifei/Social-Milestone-Video-Generator.git
@@ -169,7 +192,7 @@ inputs/ / profiles/ / runs/       忽略的本地数据
 
 任务保存输入快照、`plan.json`、`attempts/01/raw.mp4`、`final.mp4`、`result.json` 和渲染工作文件。自定义任务还保存 `input/custom-prompt.txt`。结果记录请求 ID、模型及提示词版本、费用、元数据、路径和 `qualityGate: "disabled"`。JSON 原子写入及本地任务锁保护恢复记录。新任务不会自动创建抽帧图或审核报告。
 
-查看离线 [English architecture map](docs/architecture-flow.html) 或 [中文架构图](docs/architecture-flow.zh-CN.html)。免费模板渲染、手写叠加、数字滚动、绿幕合成和其他平台尚未实现。
+查看离线 [English architecture map](https://github.com/kuifei/Social-Milestone-Video-Generator/blob/main/docs/architecture-flow.html) 或 [中文架构图](https://github.com/kuifei/Social-Milestone-Video-Generator/blob/main/docs/architecture-flow.zh-CN.html)。免费模板渲染、手写叠加、数字滚动、绿幕合成和其他平台尚未实现。
 
 ## 开发检查
 
@@ -187,4 +210,4 @@ npm run build
 
 `.env`、`inputs/`、`profiles/` 和 `runs/` 从 Git 和 npm 打包排除。公开示例应专门筛选并明确授权；第三方媒体权利独立于代码许可证。精选 Lauren 媒体仅放入 examples/lauren/ 并附独立授权说明，从 npm 打包排除；其他本地输入和运行记录仍不纳入。
 
-发布说明：[v0.1.0-alpha.1](docs/releases/v0.1.0-alpha.1.zh-CN.md)。
+发布说明：[v0.1.0-alpha.1](https://github.com/kuifei/Social-Milestone-Video-Generator/blob/main/docs/releases/v0.1.0-alpha.1.zh-CN.md)。

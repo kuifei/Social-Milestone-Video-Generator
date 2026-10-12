@@ -42,6 +42,36 @@ function createVideoProvider(id: ProviderId, apiKey: string): VideoProvider {
 
 async function main(): Promise<void> {
   const command = process.argv[2];
+  if (command === "--help" || command === "-h") {
+    console.log(`Usage: milestone-video <command> [options]
+
+Commands:
+  profile   --screenshot <image> --out <profile.json>
+  generate  --profile <profile.json> --screenshot <image> [--out <directory>]
+  resume    --job <directory>
+  qa        --video <video> [--reference <image>]
+
+Generate options:
+  --character <image>          Reuse a character reference
+  --locale <en|zh-CN>          Closing caption language (default: en)
+  --platform <twitter>        Social platform (default: twitter)
+  --provider <minimax-h3-max|minimax-h3>
+  --character-mode <avatar|generic>
+  --effect <peace-sign|blow-out|custom>
+  --prompt-file <text>         Custom UTF-8 choreography
+  --max-attempts <1>          One paid generation per job
+  --max-estimated-cost-usd <number> (default: 3)
+
+Requires Node.js 22+, FFmpeg and FFprobe on PATH.
+Set FAL_KEY in the current directory's .env or process environment for paid commands.
+Documentation: https://github.com/kuifei/Social-Milestone-Video-Generator#readme`);
+    return;
+  }
+  if (command === "--version" || command === "-v") {
+    const {version} = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8")) as {version: string};
+    console.log(version);
+    return;
+  }
   const commandOptions: Record<string, string[]> = {
     profile: ["screenshot", "out"],
     generate: ["profile", "screenshot", "character", "locale", "platform", "provider", "character-mode", "max-attempts", "effect", "prompt-file", "max-estimated-cost-usd", "out"],

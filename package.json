@@ -1,10 +1,13 @@
 {
   "name": "milestone-video",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "English-first CLI for animated social-profile milestone videos, with Simplified Chinese closing captions.",
   "license": "MIT",
-  "private": true,
-  "files": ["dist/", "src/", "test/", "examples/", "docs/", "tsconfig.json", ".env.example", "!examples/lauren/**"],
+  "repository": {"type": "git", "url": "git+https://github.com/kuifei/Social-Milestone-Video-Generator.git"},
+  "homepage": "https://github.com/kuifei/Social-Milestone-Video-Generator#readme",
+  "bugs": {"url": "https://github.com/kuifei/Social-Milestone-Video-Generator/issues"},
+  "publishConfig": {"access": "public", "tag": "alpha", "registry": "https://registry.npmjs.org/"},
+  "files": ["dist/", "examples/*.json", "examples/*.txt", ".env.example"],
   "type": "module",
   "engines": {
     "node": ">=22"
@@ -14,7 +17,8 @@
   },
   "scripts": {
     "dev": "tsx src/cli.ts",
-    "build": "tsc",
+    "build": "node --input-type=module -e \"import {rmSync} from 'node:fs'; rmSync('dist', {recursive: true, force: true});\" && tsc",
+    "prepack": "npm run build",
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test test/*.test.ts",
     "studio": "remotion studio src/remotion/index.tsx"

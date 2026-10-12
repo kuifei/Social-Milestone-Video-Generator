@@ -7,6 +7,19 @@ import {join} from "node:path";
 import {fileURLToPath} from "node:url";
 import test from "node:test";
 
+test("CLI help and version work outside the project without credentials", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "milestone-cli-info-"));
+  t.after(() => rm(dir, {recursive: true, force: true}));
+  const cli = fileURLToPath(new URL("../src/cli.ts", import.meta.url));
+  for (const flag of ["--help", "--version"]) {
+    const result = spawnSync(process.execPath, ["--import", import.meta.resolve("tsx"), cli, flag], {cwd: dir, env: {...process.env, FAL_KEY: ""}, encoding: "utf8", timeout: 15000});
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stderr, "");
+    assert.match(result.stdout, flag === "--help" ? /Usage: milestone-video.*[\s\S]*generate/ : /^\d+\.\d+\.\d+/);
+    assert.equal(existsSync(join(dir, "runs")), false);
+  }
+});
+
 test("CLI validates effects and single-attempt settings before paid requests", async () => {
   const dir = await mkdtemp(join(tmpdir(), "milestone-cli-"));
   const profile = join(dir, "profile.json");

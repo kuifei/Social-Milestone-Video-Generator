@@ -3,13 +3,15 @@ import {openBrowser, renderMedia, selectComposition} from "@remotion/renderer";
 import {cp, mkdir} from "node:fs/promises";
 import {join} from "node:path";
 import {fileURLToPath} from "node:url";
+import {existsSync} from "node:fs";
 import type {VideoMetadata} from "../domain/types.js";
 
-const projectRoot = fileURLToPath(new URL("../../", import.meta.url));
+const compiledEntry = fileURLToPath(new URL("../remotion/index.js", import.meta.url));
+const entryPoint = existsSync(compiledEntry) ? compiledEntry : fileURLToPath(new URL("../remotion/index.tsx", import.meta.url));
 
 export async function checkRemotionEnvironment(): Promise<void> {
   try {
-    const serveUrl = await bundle({entryPoint: join(projectRoot, "src/remotion/index.tsx")});
+    const serveUrl = await bundle({entryPoint});
     const browser = await openBrowser("chrome");
     try {
       await selectComposition({serveUrl, id: "MilestoneVideo", inputProps: {closingText: "Preflight", durationSeconds: 15, fps: 24}, puppeteerInstance: browser});
@@ -24,7 +26,7 @@ export async function renderClosingOverlay(sourceVideo: string, closingText: str
   await mkdir(publicDir, {recursive: true});
   await cp(sourceVideo, join(publicDir, "source.mp4"), {force: true});
   const inputProps = {closingText, durationSeconds: media.durationSeconds, fps: media.fps};
-  const serveUrl = await bundle({entryPoint: join(projectRoot, "src/remotion/index.tsx"), publicDir});
+  const serveUrl = await bundle({entryPoint, publicDir});
   const composition = await selectComposition({serveUrl, id: "MilestoneVideo", inputProps});
   await renderMedia({composition, serveUrl, codec: "h264", outputLocation: outputPath, inputProps, overwrite: true});
 }

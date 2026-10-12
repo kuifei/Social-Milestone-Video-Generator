@@ -2,7 +2,7 @@
 
 **English** · [中文](README.zh-CN.md)
 
-Prepared release: **v0.1 Developer Alpha**, tag `v0.1.0-alpha.1`, GitHub **Pre-release**. The current source package is private and is not being published to npm.
+Published GitHub release: **v0.1 Developer Alpha**, tag `v0.1.0-alpha.1`, **Pre-release**. The repository is Public. The standalone npm package is prepared as `milestone-video@0.1.0-alpha.2`, under the `alpha` distribution tag.
 
 ## Remote history and authentication
 
@@ -28,4 +28,6 @@ Review the complete Git candidate set for credentials and unintended local data.
 
 After source and example review, push a commit continuing the remote history. Create the `v0.1.0-alpha.1` release from that reviewed commit, set the title to **v0.1 Developer Alpha**, use [the release notes](v0.1.0-alpha.1.md), and check **Set as a pre-release**. Resolve relative links to repository URLs when copying these notes into a GitHub release body. Keeping the media in the repository avoids duplicating it as unrelated release attachments.
 
-The repository currently remains Private. A public example requires a separate visibility change to Public at publication time. Confirm that final visibility change and release before applying it. This preparation document does not claim that a push, visibility change, tag, or release has occurred.
+The repository visibility and Alpha.1 GitHub release were confirmed and published on October 12, 2026, from `a7421e08416f3d354970eb0bcb85d3a64b9b221f`. Keep that tag unchanged.
+
+For the npm release, authenticate separately with `npm login`, then run `npm pack` and install the resulting tarball in a fresh directory. Verify the installed CLI and Remotion export with production dependencies only. Publish the reviewed tarball with `npm publish <tarball> --access public --tag alpha`, then verify its registry version and `npx milestone-video@alpha --version`. Do not include `.env`, local data, source tests, or Lauren media in the tarball.

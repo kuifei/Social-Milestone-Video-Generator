@@ -2,7 +2,7 @@
 
 [English](README.md) · **中文**
 
-准备版本：**v0.1 开发者 Alpha**，标签 `v0.1.0-alpha.1`，GitHub **Pre-release**。源码包仍为 private，不发布 npm。
+已发布 GitHub 版本：**v0.1 开发者 Alpha**，标签 `v0.1.0-alpha.1`，**Pre-release**，仓库已公开。独立 npm 包准备为 `milestone-video@0.1.0-alpha.2`，使用 `alpha` 分发标签。
 
 ## 远端历史与认证
 
@@ -28,4 +28,6 @@ npm pack --dry-run
 
 审核代码和示例后，沿远端历史提交并推送。以审核后的提交创建 `v0.1.0-alpha.1`，标题 **v0.1 Developer Alpha**，使用[发布说明](v0.1.0-alpha.1.zh-CN.md)，勾选 **Set as a pre-release**。复制说明到 GitHub Release 正文时，将相对链接改成对应仓库地址。媒体保留在仓库，不另行复制到发布附件。
 
-仓库当前仍为 Private，示例真正公开需要发布时改为 Public。最后的可见性修改与发布需确认后执行。本准备文档不表示已经推送、改为公开、打标签或创建 Release。
+仓库公开与 Alpha.1 GitHub 发布已于 2026 年 10 月 12 日确认并完成，基于 `a7421e08416f3d354970eb0bcb85d3a64b9b221f`。保持该标签不变。
+
+npm 发布需单独执行 `npm login`。运行 `npm pack` 后，在全新目录安装生成的 tarball，仅使用生产依赖验证 CLI 与 Remotion 导出。随后执行 `npm publish <tarball> --access public --tag alpha` 发布已审核的包，并核对注册表版本及 `npx milestone-video@alpha --version`。包中不得包含 `.env`、本地数据、源码测试或 Lauren 媒体。

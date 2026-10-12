@@ -12,19 +12,42 @@ Turn an X profile screenshot into a 15-second animated follower celebration.
 
 Milestone Video creates an illustrated character from a profile avatar, animates it leaving the avatar and celebrating the follower count with a cake, and exports a 1080×1920 video with exact closing text. English is the default output language; Simplified Chinese is also supported.
 
-This is a developer Alpha. The workflow is **one generation → direct export → user review**. `completed` means the file was exported, not that the visuals, profile data, or media permissions passed verification. The repository is used by cloning and running locally; a standalone npm release is not available.
+This is a developer Alpha. The workflow is **one generation → direct export → user review**. `completed` means the file was exported, not that the visuals, profile data, or media permissions passed verification. Use the standalone CLI or clone the source repository.
 
 ## Public example
 
-[![Lauren V6 preview](examples/lauren/preview.jpg)](examples/lauren/video.mp4)
+[![Lauren V6 preview](https://raw.githubusercontent.com/kuifei/Social-Milestone-Video-Generator/main/examples/lauren/preview.jpg)](https://github.com/kuifei/Social-Milestone-Video-Generator/blob/main/examples/lauren/video.mp4)
 
-[Lauren V6 example and reproduction command](examples/lauren/README.md) · [Download video](examples/lauren/video.mp4)
+[Lauren V6 example and reproduction command](https://github.com/kuifei/Social-Milestone-Video-Generator/blob/main/examples/lauren/README.md) · [Download video](https://github.com/kuifei/Social-Milestone-Video-Generator/blob/main/examples/lauren/video.mp4)
 
-This is the selected final V6 export, generated with the original Chinese prompt and an English closing caption. Its screenshot, reference, profile, exact settings, and limitations are included. Media is **repository display/download only, excluded from MIT**; see the [media notice](examples/lauren/MEDIA_LICENSE.txt).
+This is the selected final V6 export, generated with the original Chinese prompt and an English closing caption. Its screenshot, reference, profile, exact settings, and limitations are included. Media is **repository display/download only, excluded from MIT**; see the [media notice](https://github.com/kuifei/Social-Milestone-Video-Generator/blob/main/examples/lauren/MEDIA_LICENSE.txt).
 
 ## Quick start
 
 Requirements: Node.js 22+, FFmpeg and FFprobe on `PATH`, and a fal API key. Chinese output also needs a CJK font installed (for example, Noto Sans CJK SC on Linux; macOS and Windows use system fallbacks).
+
+### Standalone CLI (npm)
+
+```bash
+npm install -g milestone-video@alpha
+milestone-video --help
+milestone-video --version
+```
+
+Or run without a global installation: `npx milestone-video@alpha --help`.
+
+Work in your own directory. Set `FAL_KEY` in that directory's `.env` or the process environment. Create a profile JSON manually with `displayName`, `handle`, `followers`, `avatarKind` (`person` or `non-person`), and `rightsConfirmed`, or request paid extraction:
+
+```bash
+milestone-video profile --screenshot /absolute/path/x-profile.png --out profiles/draft.json
+# Review the extracted fields and avatar category before generation.
+milestone-video generate --profile profiles/draft.json \
+  --screenshot /absolute/path/x-profile.png --out runs/creator-v1
+```
+
+The npm package includes compiled code and text/JSON templates. It requires no TypeScript build after installation and excludes Lauren media. In the source examples below, replace `npm run dev --` with `milestone-video` (or `npx milestone-video@alpha`) when using the installed CLI; supply your own input and custom prompt paths.
+
+### Clone and run the source
 
 ```bash
 git clone https://github.com/kuifei/Social-Milestone-Video-Generator.git
@@ -169,7 +192,7 @@ inputs/ / profiles/ / runs/       Ignored local data
 
 A job saves input snapshots, `plan.json`, `attempts/01/raw.mp4`, `final.mp4`, `result.json`, and renderer working files. Custom jobs also save `input/custom-prompt.txt`. The result records request IDs, model/prompt version, costs, media metadata, paths, and `qualityGate: "disabled"`. Atomic JSON writes and a local job lock protect recovery records. New jobs do not automatically create contact sheets or review reports.
 
-Explore the offline [English architecture map](docs/architecture-flow.html) or [中文架构图](docs/architecture-flow.zh-CN.html). Free template rendering, handwriting overlays, number rolling, green-screen compositing, and other platforms are not implemented.
+Explore the offline [English architecture map](https://github.com/kuifei/Social-Milestone-Video-Generator/blob/main/docs/architecture-flow.html) or [中文架构图](https://github.com/kuifei/Social-Milestone-Video-Generator/blob/main/docs/architecture-flow.zh-CN.html). Free template rendering, handwriting overlays, number rolling, green-screen compositing, and other platforms are not implemented.
 
 ## Development
 
@@ -187,4 +210,4 @@ Code is licensed under [MIT](LICENSE), copyright 2026 Milestone Video contributo
 
 `.env`, `inputs/`, `profiles/`, and `runs/` are excluded from Git and npm packaging. Publish only deliberately selected examples with clear media permissions; existing third-party media rights are separate from the code license. The selected Lauren media is included only under examples/lauren/ with its separate permission notice, and is excluded from npm packaging. Other local test inputs and run records remain excluded.
 
-Release notes: [v0.1.0-alpha.1](docs/releases/v0.1.0-alpha.1.md).
+Release notes: [v0.1.0-alpha.1](https://github.com/kuifei/Social-Milestone-Video-Generator/blob/main/docs/releases/v0.1.0-alpha.1.md).
